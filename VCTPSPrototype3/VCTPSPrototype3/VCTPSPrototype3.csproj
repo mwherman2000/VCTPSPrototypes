@@ -8,9 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="BTTGenericCredential.tsl" />
     <None Remove="vca2.json" />
     <None Remove="vcaack2.json" />
     <None Remove="VCTPS.tsl" />
+    <None Remove="VCTPSServerProtocols.tsl" />
+    <None Remove="VCTPSVCACredentials.tsl" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TslCodegen Include="VCTPS.tsl" />
+    <TslCodegen Include="BTTGenericCredential.tsl" />
+    <TslCodegen Include="VCTPSServerProtocols.tsl" />
+    <TslCodegen Include="VCTPSVCACredentials.tsl" />
   </ItemGroup>
 
 </Project>
