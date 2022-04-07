@@ -13,6 +13,17 @@ namespace VCTPSPrototype3
 {
     public static class VCTPSMessageFactory
     {
+        public const string POLL = "https://example.org/vctp/1.0/poll";
+        public const string NOTIFY = "https://example.org/vctp/1.0/notify";
+        public const string PULL = "https://example.org/vctp/1.0/pull";
+        public const string PUSH = "https://example.org/vctp/1.0/push";
+        public static Dictionary<string, string> MessageTypes = new Dictionary<string, string>() {
+            { POLL, "poll" },
+            { NOTIFY, "notify" },
+            { PULL, "pull" },
+            { PUSH, "push" }
+        };
+
         // NewPollMsg: Do you have anything to send me? If you do, send me a 'notify' message with a VCA (which includes a payload identifier)
         public static CoreMessage NewPollMsg(string from, string[] to, long expires = 0)
         {
