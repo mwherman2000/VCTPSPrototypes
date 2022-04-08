@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VCTPSPrototype3
+namespace VCTPSPrototype4
 {
     public static class Helpers
     {
@@ -26,11 +26,16 @@ namespace VCTPSPrototype3
             return template;
         }
 
-        public static int MessagesSent = 0;
+        public static int HttpMessagesSent = 0;
+        public static int DIDCOMMMessagesSent = 0;
         static readonly HttpClient httpClient = new HttpClient(); // https://www.thecodebuzz.com/using-httpclient-best-practices-and-anti-patterns/
+
         private static string SendHttpMessage(string url, string jsonRequest)
         {
-            string jsonResponse;
+            string jsonResponse = "{ }";
+
+            HttpMessagesSent++;
+            Console.WriteLine("SendHTTPCOMMMessage: " + Helpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " + Helpers.HttpMessagesSent.ToString() + " HTTP sent. " + Program.MessagesReceived.ToString() + " HTTP rcvd.");
 
             Console.WriteLine(">>>Agent Url:" + url);
             using (var requestMessage = new HttpRequestMessage(new HttpMethod("POST"), url))
@@ -40,18 +45,19 @@ namespace VCTPSPrototype3
                 requestMessage.Content = new StringContent(jsonRequest);
                 var task = httpClient.SendAsync(requestMessage);
                 task.Wait();
-                var result = task.Result;
-                jsonResponse = result.Content.ReadAsStringAsync().Result;
-                Console.WriteLine(">>>Response:" + url);
+                //var result = task.Result;
+                //jsonResponse = result.Content.ReadAsStringAsync().Result;
+                //Console.WriteLine(">>>Response:" + url);
             }
 
-            MessagesSent++;
             return jsonResponse;
         }
 
         public static string SendDIDCOMMMessage(string DIDCOMMEndpointUrl, string from, string to, CoreMessage core)
         {
-            string jsonResponse;
+            string jsonResponse = "{ }";
+
+            Console.WriteLine("SendDIDCOMMMessage: " + Helpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " + Helpers.HttpMessagesSent.ToString() + " HTTP sent. " + Program.MessagesReceived.ToString() + " HTTP rcvd.");
 
             Console.WriteLine(">>Sending to: " + Program.KeyVault[to].Name + "\t" + to); ;
             var encryptedPackage = DIDComm.Pack(new PackRequest { Plaintext = core.ToByteString(), 
@@ -63,8 +69,9 @@ namespace VCTPSPrototype3
                 recipients64: new List<string>() { emessage.Recipients[0].ToByteString().ToBase64() });
             VCTPSMessage msg = new VCTPSMessage(em);
             var emJson = msg.ToString();
-            jsonResponse = Helpers.SendHttpMessage(DIDCOMMEndpointUrl, emJson);
-            Console.WriteLine(">>Response:" + jsonResponse);
+            var task = Task.Run(() => Helpers.SendHttpMessage(DIDCOMMEndpointUrl, emJson));
+            DIDCOMMMessagesSent++;
+
 
             return jsonResponse;
         }

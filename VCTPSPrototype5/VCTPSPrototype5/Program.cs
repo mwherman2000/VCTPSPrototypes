@@ -10,11 +10,10 @@ using System.Text.Json;
 using Okapi.Examples.V1;
 using System.Collections.Concurrent;
 
-namespace VCTPSPrototype3;
+namespace VCTPSPrototype5;
 
 class VCTPSAgentImplementation : VCTPSAgentBase
 {
-    public int MessagesReceived = 0;
     public override void DIDCOMMEndpointHandler(VCTPSMessage request, out VCTPSResponse response)
     {
         VCTPSEncryptedMessage encryptedMessage = request.encryptedMessage;
@@ -29,14 +28,15 @@ class VCTPSAgentImplementation : VCTPSAgentBase
 
         string kid = r.Header.KeyId;
         string skid = r.Header.SenderKeyId;
-        Console.WriteLine("DIDCOMMEndpointHandler:" + skid + " to\r\n" + kid);
+        Console.WriteLine("DIDCOMMEndpointHandler: " + skid + " to\r\n" + kid);
 
         if (!Program.Queues.ContainsKey(kid)) Program.Queues.Add(kid, new ConcurrentQueue<EncryptedMessage>());
         Program.Queues[kid].Enqueue(emessage);
 
         response.rc = (int)Trinity.TrinityErrorCode.E_SUCCESS;
 
-        MessagesReceived++;
+        Program.MessagesReceived++;
+        Console.WriteLine("DIDCOMMEndpointHandler: " + Helpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " + Helpers.HttpMessagesSent.ToString() + " HTTP sent. " + Program.MessagesReceived.ToString() + " HTTP rcvd.");
     }
 }
 
@@ -60,6 +60,7 @@ public class Program
     public static string vcJson;
     public static string vcaJson;
     public static string vcaackJson;
+    public static int MessagesReceived = 0;
 
     static void Main(string[] args)
     {
@@ -74,9 +75,9 @@ public class Program
         KeyVault.Add(Actors.Echo.KeyId, new ActorInfo { Name = Actors.Echo.Name, MsgPk = Actors.Echo.PublicKey, MsgSk = Actors.Echo.SecretKey,
                     ProofPk = Actors.Echo.ProofKey.Pk, ProofSk = Actors.Echo.ProofKey.Sk });
 
-        vcJson = Helpers.GetTemplate("VCTPSPrototype3.vc2.json");
-        vcaJson = Helpers.GetTemplate("VCTPSPrototype3.vca2.json");
-        vcaackJson = Helpers.GetTemplate("VCTPSPrototype3.vcaack2.json");
+        vcJson = Helpers.GetTemplate("VCTPSPrototype5.vc2.json");
+        vcaJson = Helpers.GetTemplate("VCTPSPrototype5.vca2.json");
+        vcaackJson = Helpers.GetTemplate("VCTPSPrototype5.vcaack2.json");
 
         Trinity.TrinityConfig.HttpPort = 8081;
         VCTPSAgentImplementation vctpAgent = new VCTPSAgentImplementation();
@@ -101,10 +102,9 @@ public class Program
                     bool dequeued = emessages.TryDequeue(out emessage);
                     if (dequeued) ProcessEncryptedMessage(emessage);
                 }
-                Queues.Remove(kid);
             }
 
-            Console.WriteLine("Sleeping... " + Helpers.MessagesSent.ToString() + " msgs sent. " + vctpAgent.MessagesReceived.ToString() + " msgs received.");
+            Console.WriteLine("Processing: " + Helpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " + Helpers.HttpMessagesSent.ToString() + " HTTP sent. " + Program.MessagesReceived.ToString() + " HTTP rcvd.");
             Thread.Sleep(100);
         }
 
