@@ -157,10 +157,13 @@ public class Program
                 }
             case VCTPSMessageFactory.PUSH: // On receipt, Bob has received the VC and VCAACK
                 {
+                    // New credential received, process it according to processing rights in VCAACK
+                    WorkflowEngine.ProcessCredential(); // TODO
                     break;
                 }
             case VCTPSMessageFactory.POLL: // On receipt, Alice (and co.) replues with a NOTIFY and VCA
                 {
+                    // TODO
                     break;
                 }
         }

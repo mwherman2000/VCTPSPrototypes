@@ -13,6 +13,8 @@
     <None Remove="vcaack2.json" />
     <None Remove="VCTPS.tsl" />
     <None Remove="VCTPSServerProtocols.tsl" />
+    <None Remove="VCTPSVCAACKCredential.tsl" />
+    <None Remove="VCTPSVCACredential.tsl" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +36,10 @@
   <ItemGroup>
     <TslCodegen Include="BTTGenericCredential.tsl" />
     <TslCodegen Include="VCTPSServerProtocols.tsl" />
+    <TslCodegen Include="VCTPSVCAACKCredential.tsl" />
+    <TslCodegen Include="VCTPSVCACredential.tsl">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </TslCodegen>
   </ItemGroup>
 
 </Project>

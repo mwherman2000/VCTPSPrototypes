@@ -15,3 +15,6 @@ Creating highly scalable DIDCOMM Agents using .NET,  TRINITY,  and OKAPI with Ea
 
 
 ![VCTPS Protocol Prototypes](./images/demos2.png)
+
+
+![VCTPS Protocol Prototypes](./images/demos3.png)
