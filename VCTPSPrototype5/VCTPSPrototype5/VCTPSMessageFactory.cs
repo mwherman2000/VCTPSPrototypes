@@ -27,13 +27,20 @@ namespace VCTPSPrototype5
         // NewPollMsg: Do you have anything to send me? If you do, send me a 'notify' message with a VCA (which includes a payload identifier)
         public static CoreMessage NewPollMsg(string from, string[] to, long expires = 0)
         {
+            CoreMessage core = NewPollMsg(from, to, "", expires);
+            return core;
+        }
+
+        public static CoreMessage NewPollMsg(string from, string[] to, string vcaJson, long expires = 0)
+        {
             CoreMessage core = new CoreMessage();
 
             core.Id = Guid.NewGuid().ToString();
             core.Type = "https://example.org/vctp/1.0/poll";
 
             var message = new BasicMessage();
-            message.Text = "{ }";
+            if (String.IsNullOrEmpty(vcaJson)) vcaJson = "{ }";
+            message.Text = String.Format("{{ vca : {0} }}", vcaJson);
             core.Body = message.ToByteString();
 
             core.Expires = expires;

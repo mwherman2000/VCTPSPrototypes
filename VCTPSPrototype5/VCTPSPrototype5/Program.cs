@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using Okapi.Examples.V1;
 using System.Collections.Concurrent;
+using Okapi.Keys;
 
 namespace VCTPSPrototype5;
 
@@ -78,6 +79,16 @@ public class Program
         vcJson = Helpers.GetTemplate("VCTPSPrototype5.vc2.json");
         vcaJson = Helpers.GetTemplate("VCTPSPrototype5.vca2.json");
         vcaackJson = Helpers.GetTemplate("VCTPSPrototype5.vcaack2.json");
+
+        string grantedkey = Actors.Delta.KeyId;
+        string kckid = DIDKey.Generate(new GenerateKeyRequest { KeyType = KeyType.X25519 }).Key[0].Kid;
+        string[] rights = new string[] { "read" };
+        string[] restrictions = new string[] { "forward" };
+        string[] processing = new string[] { "approve", "reject" };
+        VCTPS_VCA_SealedEnvelope vca = VCTPSCredentialFactory.NewVCACredential(grantedkey, kckid,
+            rights, restrictions, processing, Actors.Charlie.ProofKey.Sk, Helpers.ToBase64String("1234"));
+        string jsonVCA = vca.ToString();
+        Console.WriteLine("jsonVCA:\r\n" + jsonVCA);
 
         Trinity.TrinityConfig.HttpPort = 8081;
         VCTPSAgentImplementation vctpAgent = new VCTPSAgentImplementation();
