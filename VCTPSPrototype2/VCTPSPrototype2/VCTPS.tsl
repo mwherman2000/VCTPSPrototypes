@@ -7,6 +7,12 @@
 // http://hyperonomy.com
 // (c) Copyright 2022. Parallelspace Corporation, Bindloss, Alberta, Canada
 
+
+cell struct VCTPSEncryptedMessage_Cell
+{
+	VCTPSEncryptedMessage em;
+}
+
 struct VCTPSEncryptedMessage
 {
 	string lv64;

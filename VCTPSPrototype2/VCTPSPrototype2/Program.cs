@@ -8,14 +8,23 @@ using Pbmse.V1;
 using System.Diagnostics;
 using System.Text.Json;
 using Okapi.Examples.V1;
+using Trinity;
 
 namespace VCTPSPrototype2;
 
 class VCTPSAgentImplementation : VCTPSAgentBase
 {
     public override void DIDCOMMEndpointHandler(VCTPSMessage request, out VCTPSResponse response)
-    {
+    { 
         VCTPSEncryptedMessage encryptedMessage = request.encryptedMessage;
+
+        // Save the VCTPSEncryptedMessage into a LocalStorage
+        // 'cell' in TSL adds CellId and causes a value to be assigned to it when it is created (new'ed)
+        VCTPSEncryptedMessage_Cell enscryptedMessageCell = new VCTPSEncryptedMessage_Cell(encryptedMessage);
+        Global.LocalStorage.SaveVCTPSEncryptedMessage_Cell(enscryptedMessageCell);
+        var celltype = Global.LocalStorage.GetCellType(enscryptedMessageCell.CellId);
+        ulong cellcount = Global.LocalStorage.CellCount;
+        Console.WriteLine("cellid: " + enscryptedMessageCell.CellId.ToString() + " celltype: " + celltype.ToString() + " cellcount: " + cellcount);
 
         EncryptedMessage emessage = new EncryptedMessage();
         emessage.Iv = ByteString.FromBase64(encryptedMessage.lv64);
