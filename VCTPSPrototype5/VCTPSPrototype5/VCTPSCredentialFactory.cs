@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace VCTPSPrototype5
 {
@@ -29,12 +30,56 @@ namespace VCTPSPrototype5
             VCTPS_VCA_Envelope envelope = new VCTPS_VCA_Envelope(vcakey, label, content);
             string json = envelope.ToString();
             string hash64 = SHA256Helpers.ComputeHash(json);
-            string proof64 = ProofHelpers.ComputeProof(hash64, proofSk, nonce64);
-            BTTGenericCredential_EnvelopeSeal proof = new BTTGenericCredential_EnvelopeSeal(hash64, proof64);
+            string hashproof64 = ProofHelpers.ComputeProof(hash64, proofSk, nonce64);
+            //ComputeBenchmark(json, proofSk, nonce64);
+            BTTGenericCredential_EnvelopeSeal proof = new BTTGenericCredential_EnvelopeSeal(hash64, hashproof64);
             VCTPS_VCA_SealedEnvelope sealedEnvelope = new VCTPS_VCA_SealedEnvelope(envelope, proof);
+
+            //string vcJson = Helpers.GetTemplate("VCTPSPrototype5.vc2.json");
+            //ComputeBenchmark(vcJson, proofSk, nonce64);
 
             return sealedEnvelope;
 
+        }
+
+        private static void ComputeBenchmark(string json, ByteString proofSk, string nonce64)
+        {
+            int MAXTIMES = 10000;
+
+            Console.WriteLine("json.length:\t" + json.Length + " bytes");
+            Console.WriteLine("iterations:\t" + MAXTIMES);
+
+            Stopwatch stopwatch1 = Stopwatch.StartNew();
+            for (int i = 0; i < MAXTIMES; i++)
+            {
+                string hash64 = SHA256Helpers.ComputeHash(json);
+            }
+            stopwatch1.Stop();
+            long hashtime = stopwatch1.ElapsedMilliseconds;
+            Console.WriteLine("hashtime:\t" + hashtime.ToString() + "ms");
+
+            string json64 = Helpers.ToBase64String(json);
+            Stopwatch stopwatch2 = Stopwatch.StartNew();
+            for (int i = 0; i < MAXTIMES; i++)
+            {
+                string jsonproof64 = ProofHelpers.ComputeProof(json64, proofSk, nonce64);
+            }
+            stopwatch2.Stop();
+            long jsonprooftime = stopwatch2.ElapsedMilliseconds;
+            Console.WriteLine("jsonprooftime:\t" + jsonprooftime.ToString() + "ms");
+
+            string hash364 = SHA256Helpers.ComputeHash(json);
+            Stopwatch stopwatch3 = Stopwatch.StartNew();
+            for (int i = 0; i < MAXTIMES; i++)
+            {
+                string hashproof64 = ProofHelpers.ComputeProof(hash364, proofSk, nonce64);
+            }
+            stopwatch3.Stop();
+            long hashprooftime = stopwatch3.ElapsedMilliseconds;
+            Console.WriteLine("hashprooftime:\t" + hashprooftime.ToString() + "ms");
+
+            double reduction = 100.0 * (double)(jsonprooftime - hashprooftime) / (double)jsonprooftime;
+            Console.WriteLine("reduction:\t" + reduction.ToString() + "%");
         }
     }
 }

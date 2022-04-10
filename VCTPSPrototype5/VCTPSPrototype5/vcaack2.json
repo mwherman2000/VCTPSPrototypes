@@ -24,7 +24,7 @@
           "https://www.sovrona.com/ns/svrn/v1"
         ],
         "credentialsubjectudid": "did:svrn:vcaack:d5e5c9d4-4159-4eda-b427-2dfb0051ebb3",
-        "credentialsubjectclaims": {
+        "claims": {
           "vcatype": "Acknowledgement",
           "parent": "did:svrn:vca:02CB18CB-A2E8-4F80-B1A4-548AE3F59256",
           "subject": "did:svrn:vc:0B114A04-2559-4C68-AE43-B7004646BD76",
