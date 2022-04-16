@@ -10,7 +10,7 @@ using VCTPS.Protocol;
 
 namespace VCTPS.CredentialWallet
 {
-    public static class CredentialWallet
+    public static class WalletHelpers
     {
         public static readonly string DefaultNonce64 = Helpers.ToBase64String("Password1");
 
@@ -444,7 +444,7 @@ namespace VCTPS.CredentialWallet
 
                 Cac_Address postalAddress = new Cac_Address(Guid.NewGuid().ToString(), "PO Box 45", "1234 Fed Street", null, "1234",
                     "Dispatch", "Fed", "12345", "FL", new Cac_Country(new Cbc_ListCode("1234", "1234", "1234")));
-                string cac_PartyLegalEntityUdid = ""; // TODO
+                string partylegalentityudid = "5678"; // TODO
                 Cac_Contact contact = new Cac_Contact("+1 689 123-1234", null, "freddy@fedexpress.local");
                 Cac_Person person = new Cac_Person("Freddy", "F.", "Forwarder", "Freight Forwarder");
                 Cac_Party_Claims subject_claims = UBL21CredentialFactory.NewPartyClaims(
@@ -453,7 +453,7 @@ namespace VCTPS.CredentialWallet
                     new Cac_PartyName(subject.OrgName),
                     postalAddress,
                     new Cac_PartyTaxScheme(new Cbc_SchemeCode("1234", "1234", "1234"), new Cac_TaxScheme(new Cbc_SchemeCode("1234", "1234", "1234"))),
-                    cac_PartyLegalEntityUdid, contact, person);
+                    partylegalentityudid, contact, person);
                 string claimsJson = subject_claims.ToString();
 
                 Cac_Party_SealedEnvelope subject_credential = UBL21CredentialFactory.NewPartyCredential(udid, vca, subject_claims, proofSk, DefaultNonce64);
@@ -474,7 +474,7 @@ namespace VCTPS.CredentialWallet
 
                 Cac_Address postalAddress = new Cac_Address(Guid.NewGuid().ToString(), "PO Box 45", "1234 Ech Street", null, "1234",
                     "Dispatch", "Ech", "12345", "NY", new Cac_Country(new Cbc_ListCode("1234", "1234", "1234")));
-                string cac_PartyLegalEntityUdid = ""; // TODO
+                string partylegalentityudid = "5678"; // TODO
                 Cac_Contact contact = new Cac_Contact("+1 212 123-1234", null, "darryl@dhlorries.local");
                 Cac_Person person = new Cac_Person("Darryl", "D.", "Forwarder", "Freight Forwarder");
                 Cac_Party_Claims subject_claims = UBL21CredentialFactory.NewPartyClaims(
@@ -483,7 +483,7 @@ namespace VCTPS.CredentialWallet
                     new Cac_PartyName(subject.OrgName),
                     postalAddress,
                     new Cac_PartyTaxScheme(new Cbc_SchemeCode("1234", "1234", "1234"), new Cac_TaxScheme(new Cbc_SchemeCode("1234", "1234", "1234"))),
-                    cac_PartyLegalEntityUdid, contact, person);
+                    partylegalentityudid, contact, person);
                 string claimsJson = subject_claims.ToString();
 
                 Cac_Party_SealedEnvelope subject_credential = UBL21CredentialFactory.NewPartyCredential(udid, vca, subject_claims, proofSk, DefaultNonce64);
@@ -504,7 +504,7 @@ namespace VCTPS.CredentialWallet
 
                 Cac_Address postalAddress = new Cac_Address(Guid.NewGuid().ToString(), "PO Box 45", "1234 Pronto Street", null, "1234",
                     "Dispatch", "Pronto", "12345", "PA", new Cac_Country(new Cbc_ListCode("1234", "1234", "1234")));
-                string cac_PartyLegalEntityUdid = ""; // TODO
+                string partylegalentityudid = "5678"; // TODO
                 Cac_Contact contact = new Cac_Contact("+1 215 123-1234", null, "ursala@uppronto.local");
                 Cac_Person person = new Cac_Person("Ursala", "U.", "Forwarder", "Fright Forwarder");
                 Cac_Party_Claims subject_claims = UBL21CredentialFactory.NewPartyClaims(
@@ -513,7 +513,7 @@ namespace VCTPS.CredentialWallet
                     new Cac_PartyName(subject.OrgName),
                     postalAddress,
                     new Cac_PartyTaxScheme(new Cbc_SchemeCode("1234", "1234", "1234"), new Cac_TaxScheme(new Cbc_SchemeCode("1234", "1234", "1234"))),
-                    cac_PartyLegalEntityUdid, contact, person);
+                    partylegalentityudid, contact, person);
                 string claimsJson = subject_claims.ToString();
 
                 Cac_Party_SealedEnvelope subject_credential = UBL21CredentialFactory.NewPartyCredential(udid, vca, subject_claims, proofSk, DefaultNonce64);
@@ -521,6 +521,99 @@ namespace VCTPS.CredentialWallet
 
                 PartyDirectory.Add(subject.KeyId, subject_credential);
             }
+
+            // Bob Buyer @ ABC Grocery
+            {
+                GenericSubject subject = KeyVault.Add("Bob Buyer");
+                subject.OrgName = "ABC Grocery";
+                string udid = subject.KeyId;
+                List<string> rights = new List<string>() { "read" };
+                ByteString proofSk = subject.ProofKey.Sk;
+
+                VCTPS_VCA_SealedEnvelope vca = VCTPSCredentialFactory.NewVCACredential("*", udid, rights, null, null, proofSk, DefaultNonce64);
+                string vcaJson = vca.ToString();
+
+                Cac_Address postalAddress = new Cac_Address(Guid.NewGuid().ToString(), "PO Box 45", "1234 ABC Street", null, "1234",
+                    "Dispatch", "ABC", "12345", "AL", new Cac_Country(new Cbc_ListCode("1234", "1234", "1234")));
+                string partylegalentityudid = "5678"; // TODO
+                Cac_Contact contact = new Cac_Contact("+1 205 123-1234", null, "bob@abcgrocery.local");
+                Cac_Person person = new Cac_Person("Bob", "B.", "Buyer", "Buyer");
+                Cac_Party_Claims subject_claims = UBL21CredentialFactory.NewPartyClaims(
+                    new Cbc_SchemeCode("1234", "1234", "1234"),
+                    new Cac_PartyIdentification(new Cbc_SchemeCode("1234", "1234", "1234")),
+                    new Cac_PartyName(subject.OrgName),
+                    postalAddress,
+                    new Cac_PartyTaxScheme(new Cbc_SchemeCode("1234", "1234", "1234"), new Cac_TaxScheme(new Cbc_SchemeCode("1234", "1234", "1234"))),
+                    partylegalentityudid, contact, person);
+                string claimsJson = subject_claims.ToString();
+
+                Cac_Party_SealedEnvelope subject_credential = UBL21CredentialFactory.NewPartyCredential(udid, vca, subject_claims, proofSk, DefaultNonce64);
+                string sealedEnvelopeJson = subject_credential.ToString();
+
+                PartyDirectory.Add(subject.KeyId, subject_credential);
+            }
+        }
+
+        public static void InitializeBusinessDocuments()
+        {
+            // Create a sample Invoice from David's Cabbages to Bob Buyer at ABC Grocery
+            {
+                GenericSubject subject = KeyVault.Add("Invoice 1234");
+                subject.OrgName = "David's Cabbages";
+                string udid = subject.KeyId;
+                List<string> rights = new List<string>() { "read" };
+                List<string> processing = new List<string> { "accept", "reject" };
+                ByteString proofSk = subject.ProofKey.Sk;
+
+                VCTPS_VCA_SealedEnvelope vca = VCTPSCredentialFactory.NewVCACredential("*", udid, rights, null, processing, proofSk, DefaultNonce64);
+                string vcaJson = vca.ToString();
+
+                Cac_AccountingSupplierParty accountingsupplierparty = new Cac_AccountingSupplierParty(WalletHelpers.FindKey("Darla Accounting", RegistryType.Party));
+                Cac_AccountingCustomerParty accountingcustomerparty = new Cac_AccountingCustomerParty(WalletHelpers.FindKey("Mark Accounting", RegistryType.Party));
+                Cac_PayeeParty payeeparty = new Cac_PayeeParty(WalletHelpers.FindKey("Mark Accounting", RegistryType.Party));
+                string deliverykey = WalletHelpers.FindKey("Bob Buyer", RegistryType.Party);
+                Cac_Party_Claims deliveryclaims = (Cac_Party_Claims)PartyDirectory[deliverykey].envelope.content.claims;
+                Cac_Address deliveryaddress = deliveryclaims.cac_PostalAddress;
+                string payeefinancialaccountudid = "5678"; //TODO
+                string cabbagesitemid = WalletHelpers.FindKey("cabbages", RegistryType.Item);
+                Cac_InvoiceLine line1 = new Cac_InvoiceLine(
+                    Guid.NewGuid().ToString(),
+                    new Cbc_Note(ISO639_1_LanguageCodes.en, "Cabbages - 100 lbs"),
+                    new Cbc_Quantity("lb", 100),
+                    new Cbc_Amount("USD", 20.80),
+                    "1234",
+                    new Cac_OrderLineReference("1"),
+                    new List<Cac_AllowanceCharge> { new Cac_AllowanceCharge(true, "abcd", new Cbc_Amount("USD", 1.00)) },
+                    new Cac_TaxTotal(new Cbc_Amount("USD", 1.00)),
+                    cabbagesitemid,
+                    new Cac_Price(new Cbc_Amount("USD", 20.80)));
+              
+                UBL21_Invoice2_Claims subject_claims = UBL21CredentialFactory.NewInvoiceClaims(DateTime.UtcNow,
+                    new Cbc_ListCode("1234", "1234", "1234"),
+                    new Cbc_Note(ISO639_1_LanguageCodes.en, "Invoice 1234"),
+                    DateTime.UtcNow,
+                    new Cbc_ListCode("1234", "1234", "1234"),
+                    "1234.00",
+                    new Cbc_TimePeriod(DateTime.UtcNow, DateTime.UtcNow.AddDays(30)),
+                    new Cbc_OrderReference("1234"),
+                    new Cac_DocumentReference("1234", "Supplemental Documentation", new Cac_Attachment(new Cac_ExternalReference("http://example.com/s1"))),
+                    new List<Cac_DocumentReference> { },
+                    accountingsupplierparty, accountingcustomerparty, payeeparty,
+                    new Cac_Delivery(DateTime.UtcNow, new Cac_DeliveryLocation(new Cbc_SchemeCode("1234", "1234", "1234"), deliveryaddress)),
+                    new Cac_PaymentMeans(new Cbc_ListCode("1234", "1234", "1234"), DateTime.UtcNow, "1234", "1234", payeefinancialaccountudid),
+                    new Cac_PaymentTerms(new Cbc_Note(ISO639_1_LanguageCodes.en, "Net 30")),
+                    new List<Cac_AllowanceCharge> { new Cac_AllowanceCharge(true, "abcd", new Cbc_Amount("USD", 10.0))},
+                    new Cac_TaxTotal(new Cbc_Amount("USD", 12.34)),
+                    new Cac_LegalMonetaryTotal(new Cbc_Amount("USD", 12.34), new Cbc_Amount("USD", 12.34), new Cbc_Amount("USD", 12.34), new Cbc_Amount("USD", 12.34), new Cbc_Amount("USD", 12.34), new Cbc_Amount("USD", 12.34), new Cbc_Amount("USD", 12.34), new Cbc_Amount("USD", 12.34)),
+                    new List<Cac_InvoiceLine> { line1 });
+                string claimsJson = subject_claims.ToString();
+
+                UBL21_Invoice2_SealedEnvelope subject_credential = UBL21CredentialFactory.NewInvoiceCredential(udid, vca, subject_claims, proofSk, DefaultNonce64);
+                string sealedEnvelopeJson = subject_credential.ToString();
+
+                Invoice2Journal.Add(subject.KeyId, subject_credential);
+            }
+
         }
     }
 }

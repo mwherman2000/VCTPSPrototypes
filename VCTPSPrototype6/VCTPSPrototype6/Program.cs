@@ -62,8 +62,9 @@ namespace VCTPSPrototype6
             vcaJson = Helpers.GetTemplate(assembly, "VCTPSPrototype6.vca2.json");
             vcaackJson = Helpers.GetTemplate(assembly, "VCTPSPrototype6.vcaack2.json");
 
-            CredentialWallet.InitializeItems();
-            CredentialWallet.InitializeParties();
+            WalletHelpers.InitializeItems();
+            WalletHelpers.InitializeParties();
+            WalletHelpers.InitializeBusinessDocuments();
 
             string grantedkey = KeyVault.FindKey("Delta");
             string vcakid = DIDKey.Generate(new GenerateKeyRequest { KeyType = KeyType.X25519 }).Key[0].Kid;
