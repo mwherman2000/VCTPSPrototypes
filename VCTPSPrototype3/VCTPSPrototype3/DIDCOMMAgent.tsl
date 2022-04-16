@@ -7,7 +7,7 @@
 // http://hyperonomy.com
 // (c) Copyright 2022. Parallelspace Corporation, Bindloss, Alberta, Canada
 
-struct VCTPSEncryptedMessage
+struct DIDCOMMEncryptedMessage
 {
 	string lv64;
 	string ciphertext64;
@@ -15,12 +15,12 @@ struct VCTPSEncryptedMessage
 	List<string> recipients64;
 }
 
-struct VCTPSMessage
+struct DIDCOMMMessage
 {
-	VCTPSEncryptedMessage encryptedMessage; 
+	DIDCOMMEncryptedMessage encryptedMessage; 
 }
 
-struct VCTPSResponse 
+struct DIDCOMMResponse 
 {
 	long rc;
 }
@@ -28,11 +28,11 @@ struct VCTPSResponse
 protocol DIDCOMMEndpoint
 {
 	Type: HTTP;
-	Request:  VCTPSMessage;
-	Response: VCTPSResponse;
+	Request:  DIDCOMMMessage;
+	Response: DIDCOMMResponse;
 }
 
-server VCTPSAgent
+server DIDCOMMAgent
 {
     protocol DIDCOMMEndpoint;
 }

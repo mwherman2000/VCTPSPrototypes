@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="DIDCOMMAgent.tsl" />
     <None Remove="vca2.json" />
     <None Remove="vcaack2.json" />
-    <None Remove="VCTPS.tsl" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TslCodegen Include="VCTPS.tsl" />
+    <TslCodegen Include="DIDCOMMAgent.tsl" />
   </ItemGroup>
 
 </Project>

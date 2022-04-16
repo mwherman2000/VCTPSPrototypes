@@ -20,12 +20,26 @@
 
 struct Cac_AccountingSupplierParty
 {
-	string cac_PartyUdid; // Cbc_Party_SealedEnvelope;
+	string cac_PartyUdid; // Cac_Party_SealedEnvelope;
 }
 
 struct Cac_AccountingCustomerParty
 {
-	string cac_PartyUdid; // Cbc_Party_SealedEnvelope;
+	string cac_PartyUdid; // Cac_Party_SealedEnvelope;
+}
+
+struct Cac_Address
+{
+	string cbc_ID;
+	string cbc_PostBox;
+	string cbc_StreetName;
+	string cbc_AdditionalStreetName;
+	string cbc_BuildingNumber;
+	string cbc_Department;
+	string cbc_CityName;
+	string cbc_PostalZone;
+	string cbc_CountrySubentityCode;
+	Cac_Country cbc_Country;
 }
 
 struct Cac_AllowanceCharge
@@ -37,7 +51,7 @@ struct Cac_AllowanceCharge
 
 struct Cac_Attachment
 {
-	string cac_ExternalReferenceUdid; // Cac_ExternalReference_SealedEnvelope
+	Cac_ExternalReference cac_ExternalReference;
 }
 
 struct Cac_ClassifiedTaxCategory
@@ -45,6 +59,13 @@ struct Cac_ClassifiedTaxCategory
 	Cbc_SchemeCode cbc_ID;
 	double cbc_Percent;
 	Cac_TaxScheme cac_TaxScheme;
+}
+
+struct Cac_Contact
+{
+	optional string cbc_Telephone;
+	optional string cbc_Telefax;
+	optional string cbc_ElectronicMail;
 }
 
 struct Cac_Country
@@ -61,7 +82,7 @@ struct Cac_Delivery
 struct Cac_DeliveryLocation
 {
 	Cbc_SchemeCode cbc_ID;
-	string cac_AddressUdid; // Cac_Address_SealedEnvelope
+	Cac_Address cac_Address;
 }
 
 struct Cac_DocumentReference
@@ -75,6 +96,12 @@ struct Cbc_EmbeddedDocumentBinaryObject
 {
 	string _mimeCode;
 	string binary16;
+}
+
+struct Cac_ExternalReference
+{
+	optional string cbc_URI;	
+	optional Cbc_EmbeddedDocumentBinaryObject cbc_EmbeddedDocumentBinaryObject;
 }
 
 struct Cac_FinancialInstitution
@@ -97,7 +124,7 @@ struct Cac_InvoiceLine
 	Cac_OrderLineReference cac_OrderLineReference;
 	List<Cac_AllowanceCharge> cac_AllowanceCharges;
 	Cac_TaxTotal cac_TaxTotal;
-	string cac_ItemUdid; // Cac_Item_SealedEnvelope
+	string cac_ItemUdid;							// Cac_Item_SealedEnvelope
 	Cac_Price cac_Price;
 }
 
@@ -132,6 +159,23 @@ struct Cac_PartyTaxScheme
 {
 	Cbc_SchemeCode cbc_CompanyID;
 	Cac_TaxScheme cac_TaxScheme;
+}
+
+struct Cac_PaymentMeans
+{
+	Cbc_ListCode cbc_PaymentMeansCode;
+	DateTime cbc_PaymentDueDate;
+	string cbc_PaymentChannel;
+	string cbc_PaymentID;
+	string cac_PayeeFinancialAccountUdid;	// Cac_PayeeFinancialAccount_SealedEnvelope
+}
+
+struct Cac_Person
+{
+	string cbc_FirstName;
+	string cbc_MiddleName;
+	string cbc_FamilyName;
+	string cbc_JobTitle;
 }
 
 struct Cac_Price

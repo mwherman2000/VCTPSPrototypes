@@ -8,51 +8,54 @@ using Pbmse.V1;
 using System.Diagnostics;
 using System.Text.Json;
 using Okapi.Examples.V1;
+using System.Net.Http;
 
-namespace VCTPSPrototype1;
-
-class VCTPSAgentImplementation : VCTPSAgentBase
+namespace VCTPSPrototype1
 {
-    public override void DIDCOMMEndpointHandler(VCTPSMessage request, out VCTPSResponse response)
+
+    class DIDCOMMAgentImplementation : DIDCOMMAgentBase
     {
-        // TODO
-        response.rc = (int)Trinity.TrinityErrorCode.E_SUCCESS;
-    }
-}
-
-public class Program
-{
-    static void Main(string[] args)
-    {
-        Trinity.TrinityConfig.HttpPort = 8081;
-
-        VCTPSAgentImplementation vctpsAgent = new VCTPSAgentImplementation();
-        vctpsAgent.Start();
-        Console.WriteLine("VCTPS Agent started...");
-
-        string emJson = "{}"; // dummy message
-
-        using (var httpClient = new HttpClient())
+        public override void DIDCOMMEndpointHandler(DIDCOMMMessage request, out DIDCOMMResponse response)
         {
-            string agentUrl = "http://localhost:8081/DIDCOMMEndpoint/";
-            Console.WriteLine(">>>Agent Url:" + agentUrl);
-            using (var requestMessage = new HttpRequestMessage(new HttpMethod("POST"), agentUrl))
-            {
-                requestMessage.Headers.TryAddWithoutValidation("Accept", "application/json");
-                Console.WriteLine(">>>Payload:" + emJson);
-                requestMessage.Content = new StringContent(emJson);
-                var task = httpClient.SendAsync(requestMessage);
-                task.Wait();
-                var result = task.Result;
-                string jsonResponse = result.Content.ReadAsStringAsync().Result;
-                Console.WriteLine(">>>Response:" + jsonResponse);
-            }
+            // TODO
+            response.rc = (int)Trinity.TrinityErrorCode.E_SUCCESS;
         }
+    }
 
-        Console.WriteLine("Press Enter to stop VCTPS Agent...");
-        Console.ReadLine();
+    public class Program
+    {
+        static void Main(string[] args)
+        {
+            Trinity.TrinityConfig.HttpPort = 8081;
 
-        vctpsAgent.Stop();
+            DIDCOMMAgentImplementation didAgent = new DIDCOMMAgentImplementation();
+            didAgent.Start();
+            Console.WriteLine("DIDCOMM Agent started...");
+
+            string emJson = "{}"; // dummy message
+
+            using (var httpClient = new HttpClient())
+            {
+                string agentUrl = "http://localhost:8081/DIDCOMMEndpoint/";
+                Console.WriteLine(">>>Agent Url:" + agentUrl);
+                using (var requestMessage = new HttpRequestMessage(new HttpMethod("POST"), agentUrl))
+                {
+                    requestMessage.Headers.TryAddWithoutValidation("Accept", "application/json");
+                    Console.WriteLine(">>>Payload:" + emJson);
+                    requestMessage.Content = new StringContent(emJson);
+                    var task = httpClient.SendAsync(requestMessage);
+                    task.Wait();
+                    var result = task.Result;
+                    string jsonResponse = result.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine(">>>Response:" + jsonResponse);
+                }
+            }
+
+            Console.WriteLine("Press Enter to stop DIDCOMM Agent...");
+            Console.ReadLine();
+
+            didAgent.Stop();
+        }
     }
 }
 

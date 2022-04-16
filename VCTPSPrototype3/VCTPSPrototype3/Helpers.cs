@@ -59,9 +59,9 @@ namespace VCTPSPrototype3
                                                                     ReceiverKey = Program.KeyVault[to].MsgPk, 
                                                                     Mode = EncryptionMode.Direct });
             var emessage = encryptedPackage.Message;
-            VCTPSEncryptedMessage em = new VCTPSEncryptedMessage(emessage.Iv.ToBase64(), emessage.Ciphertext.ToBase64(), emessage.Tag.ToBase64(),
+            DIDCOMMEncryptedMessage em = new DIDCOMMEncryptedMessage(emessage.Iv.ToBase64(), emessage.Ciphertext.ToBase64(), emessage.Tag.ToBase64(),
                 recipients64: new List<string>() { emessage.Recipients[0].ToByteString().ToBase64() });
-            VCTPSMessage msg = new VCTPSMessage(em);
+            DIDCOMMMessage msg = new DIDCOMMMessage(em);
             var emJson = msg.ToString();
             jsonResponse = Helpers.SendHttpMessage(DIDCOMMEndpointUrl, emJson);
             Console.WriteLine(">>Response:" + jsonResponse);

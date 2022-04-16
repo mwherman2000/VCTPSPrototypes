@@ -12,12 +12,12 @@ using System.Collections.Concurrent;
 
 namespace VCTPSPrototype3;
 
-class VCTPSAgentImplementation : VCTPSAgentBase
+class DIDCOMMAgentImplementation : DIDCOMMAgentBase
 {
     public int MessagesReceived = 0;
-    public override void DIDCOMMEndpointHandler(VCTPSMessage request, out VCTPSResponse response)
+    public override void DIDCOMMEndpointHandler(DIDCOMMMessage request, out DIDCOMMResponse response)
     {
-        VCTPSEncryptedMessage encryptedMessage = request.encryptedMessage;
+        DIDCOMMEncryptedMessage encryptedMessage = request.encryptedMessage;
 
         EncryptedMessage emessage = new EncryptedMessage();
         emessage.Iv = ByteString.FromBase64(encryptedMessage.lv64);
@@ -79,9 +79,9 @@ public class Program
         vcaackJson = Helpers.GetTemplate("VCTPSPrototype3.vcaack2.json");
 
         Trinity.TrinityConfig.HttpPort = 8081;
-        VCTPSAgentImplementation vctpAgent = new VCTPSAgentImplementation();
-        vctpAgent.Start();
-        Console.WriteLine("VCTPS Agent started...");
+        DIDCOMMAgentImplementation didAgent = new DIDCOMMAgentImplementation();
+        didAgent.Start();
+        Console.WriteLine("DIDCOMM Agent started...");
 
         var notify = VCTPSMessageFactory.NewNotifyMsg(Actors.Charlie.KeyId, new string[] { Actors.Delta.KeyId, Actors.Echo.KeyId }, vcaJson);
         foreach (var to in notify.To.ToList())
@@ -104,14 +104,14 @@ public class Program
                 Queues.Remove(kid);
             }
 
-            Console.WriteLine("Sleeping... " + Helpers.MessagesSent.ToString() + " msgs sent. " + vctpAgent.MessagesReceived.ToString() + " msgs received.");
+            Console.WriteLine("Sleeping... " + Helpers.MessagesSent.ToString() + " msgs sent. " + didAgent.MessagesReceived.ToString() + " msgs received.");
             Thread.Sleep(100);
         }
 
-        Console.WriteLine("Press Enter to stop VCTPS Agent...");
+        Console.WriteLine("Press Enter to stop DIDCOMM Agent...");
         Console.ReadLine();
 
-        vctpAgent.Stop();
+        didAgent.Stop();
     }
 
     private static void ProcessEncryptedMessage(EncryptedMessage? emessage)
@@ -130,10 +130,10 @@ public class Program
         basic.MergeFrom(core.Body);
         Console.WriteLine("BasicMessage: " + core.Type + " " + basic.Text);
 
-        ProcessVCTPSMessage(skid, kid, core.Type, basic.Text);
+        ProcessDIDCOMMMessage(skid, kid, core.Type, basic.Text);
     }
 
-    private static void ProcessVCTPSMessage(string skid, string kid, string type, string message)
+    private static void ProcessDIDCOMMMessage(string skid, string kid, string type, string message)
     {
         switch (type) // Alice sending a NOTIFY and a VCA
         {

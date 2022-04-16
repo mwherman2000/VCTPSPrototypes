@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -9,15 +8,6 @@
 
   <ItemGroup>
     <None Remove="BTTGenericCredential.tsl" />
-    <None Remove="DIDCOMMAgent.tsl" />
-    <None Remove="vca2.json" />
-    <None Remove="vcaack2.json" />
-    <None Remove="VCTPS.tsl" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="vca2.json" />
-    <EmbeddedResource Include="vcaack2.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,7 +23,6 @@
 
   <ItemGroup>
     <TslCodegen Include="BTTGenericCredential.tsl" />
-    <TslCodegen Include="DIDCOMMAgent.tsl" />
   </ItemGroup>
 
 </Project>

@@ -12,16 +12,16 @@ using Trinity;
 
 namespace VCTPSPrototype2;
 
-class VCTPSAgentImplementation : VCTPSAgentBase
+class DIDCOMMAgentImplementation : DIDCOMMAgentBase
 {
-    public override void DIDCOMMEndpointHandler(VCTPSMessage request, out VCTPSResponse response)
+    public override void DIDCOMMEndpointHandler(DIDCOMMMessage request, out DIDCOMMResponse response)
     { 
-        VCTPSEncryptedMessage encryptedMessage = request.encryptedMessage;
+        DIDCOMMEncryptedMessage encryptedMessage = request.encryptedMessage;
 
-        // Save the VCTPSEncryptedMessage into a LocalStorage
+        // Save the DIDCOMMEncryptedMessage into a LocalStorage
         // 'cell' in TSL adds CellId and causes a value to be assigned to it when it is created (new'ed)
-        VCTPSEncryptedMessage_Cell enscryptedMessageCell = new VCTPSEncryptedMessage_Cell(encryptedMessage);
-        Global.LocalStorage.SaveVCTPSEncryptedMessage_Cell(enscryptedMessageCell);
+        DIDCOMMEncryptedMessage_Cell enscryptedMessageCell = new DIDCOMMEncryptedMessage_Cell(encryptedMessage);
+        Global.LocalStorage.SaveDIDCOMMEncryptedMessage_Cell(enscryptedMessageCell);
         var celltype = Global.LocalStorage.GetCellType(enscryptedMessageCell.CellId);
         ulong cellcount = Global.LocalStorage.CellCount;
         Console.WriteLine("cellid: " + enscryptedMessageCell.CellId.ToString() + " celltype: " + celltype.ToString() + " cellcount: " + cellcount);
@@ -75,9 +75,9 @@ public class Program
         string vcaJson = Helpers.GetTemplate("VCTPSPrototype2.vca2.json");
 
         Trinity.TrinityConfig.HttpPort = 8081;
-        VCTPSAgentImplementation vctpAgent = new VCTPSAgentImplementation();
-        vctpAgent.Start();
-        Console.WriteLine("VCTPS Agent started...");
+        DIDCOMMAgentImplementation didAgent = new DIDCOMMAgentImplementation();
+        didAgent.Start();
+        Console.WriteLine("DIDCOMM Agent started...");
 
         var notify = VCTPSMessageFactory.NewNotifyMsg(Actors.Charlie.KeyId, new string[] { Actors.Delta.KeyId, Actors.Echo.KeyId }, vcaJson);
         foreach (var to in notify.To.ToList())
@@ -85,9 +85,9 @@ public class Program
             Console.WriteLine("Sending to: " + actors[to].Name + "\t" + to); ;
             var encryptedPackage = DIDComm.Pack(new PackRequest { Plaintext = notify.ToByteString(), SenderKey = Actors.Charlie.SecretKey, ReceiverKey = actors[to].MsgPk, Mode = EncryptionMode.Direct });
             var emessage = encryptedPackage.Message;
-            VCTPSEncryptedMessage em = new VCTPSEncryptedMessage(emessage.Iv.ToBase64(), emessage.Ciphertext.ToBase64(), emessage.Tag.ToBase64(),
+            DIDCOMMEncryptedMessage em = new DIDCOMMEncryptedMessage(emessage.Iv.ToBase64(), emessage.Ciphertext.ToBase64(), emessage.Tag.ToBase64(),
                 recipients64: new List<string>() { emessage.Recipients[0].ToByteString().ToBase64() });
-            VCTPSMessage msg = new VCTPSMessage(em);
+            DIDCOMMMessage msg = new DIDCOMMMessage(em);
             var emJson = msg.ToString();
 
             using (var httpClient = new HttpClient())
@@ -108,10 +108,10 @@ public class Program
             }
         }
 
-        Console.WriteLine("Press Enter to stop VCTPS Agent...");
+        Console.WriteLine("Press Enter to stop DIDCOMM Agent...");
         Console.ReadLine();
 
-        vctpAgent.Stop();
+        didAgent.Stop();
     }
 }
 
