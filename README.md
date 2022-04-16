@@ -1,19 +1,20 @@
-# VCTPSPrototypes
-Creating highly scalable DIDCOMM Agents using .NET,  TRINITY,  and OKAPI with Ease
+# DIDCOMM Super Stack (DIDSS)
 
-## DIDCOMM Super Stack (DIDSS)
+Creating highly scalable DIDCOMM Agents using .NET,  TRINITY,  and OKAPI with Ease
 
 ![DIDCOMM Super Stack (DIDSS)](./images/3stack.png)
 
-## VCTPS Key Principles
+## VCTPS Protocol
+
+### Founding Principles
 
 ![VCTPS Key Principles](./images/vctps-key-principles.png)
 
-## VCTPS Protocol
+### VCTPS Protocol
 
 ![VCTPS Protocol](./images/vctps-protocol-sequence-diagram.png)
 
-## VCTPS Message Types
+### VCTPS Message Types
 
 ![VCTPS Message Types](./images/msgtypes.png)
 
