@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TRACredentials", "TRACredentials\TRACredentials.csproj", "{7B560606-0DD1-49F6-B5E5-BA68FCAA0299}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OberonExample1", "OberonExample1\OberonExample1.csproj", "{0D438F61-FB6A-45E7-B7A3-352D150E6BE5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCTPS.Common", "VCTPS.Common\VCTPS.Common.csproj", "{E48644BC-A725-4F19-ABE7-5F0050C1FF66}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCTPS.CredentialWallet", "VCTPS.CredentialWallet\VCTPS.CredentialWallet.csproj", "{7B65D1FD-97CF-4897-B12D-7138C13036C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCTPS.Protocol", "VCTPS.Protocol\VCTPS.Protocol.csproj", "{DBDD2F3E-CCC6-49BF-B7B7-E5FA394CB386}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCTPS.UBL21Credentials", "VCTPS.UBL21Credentials\VCTPS.UBL21Credentials.csproj", "{BFA7F9D6-804C-4C93-B2D9-B7EC8005DD3E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCTPSPrototype6", "VCTPSPrototype6\VCTPSPrototype6.csproj", "{345F9D1C-5D19-47B7-B1F8-2378691839C7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B560606-0DD1-49F6-B5E5-BA68FCAA0299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B560606-0DD1-49F6-B5E5-BA68FCAA0299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B560606-0DD1-49F6-B5E5-BA68FCAA0299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B560606-0DD1-49F6-B5E5-BA68FCAA0299}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D438F61-FB6A-45E7-B7A3-352D150E6BE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D438F61-FB6A-45E7-B7A3-352D150E6BE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D438F61-FB6A-45E7-B7A3-352D150E6BE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D438F61-FB6A-45E7-B7A3-352D150E6BE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E48644BC-A725-4F19-ABE7-5F0050C1FF66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E48644BC-A725-4F19-ABE7-5F0050C1FF66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E48644BC-A725-4F19-ABE7-5F0050C1FF66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E48644BC-A725-4F19-ABE7-5F0050C1FF66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B65D1FD-97CF-4897-B12D-7138C13036C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B65D1FD-97CF-4897-B12D-7138C13036C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B65D1FD-97CF-4897-B12D-7138C13036C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B65D1FD-97CF-4897-B12D-7138C13036C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBDD2F3E-CCC6-49BF-B7B7-E5FA394CB386}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBDD2F3E-CCC6-49BF-B7B7-E5FA394CB386}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBDD2F3E-CCC6-49BF-B7B7-E5FA394CB386}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBDD2F3E-CCC6-49BF-B7B7-E5FA394CB386}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFA7F9D6-804C-4C93-B2D9-B7EC8005DD3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFA7F9D6-804C-4C93-B2D9-B7EC8005DD3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFA7F9D6-804C-4C93-B2D9-B7EC8005DD3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFA7F9D6-804C-4C93-B2D9-B7EC8005DD3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{345F9D1C-5D19-47B7-B1F8-2378691839C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{345F9D1C-5D19-47B7-B1F8-2378691839C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{345F9D1C-5D19-47B7-B1F8-2378691839C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{345F9D1C-5D19-47B7-B1F8-2378691839C7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8F466DED-7CC1-4B3E-ABC7-E5E2E7BDB3FB}
+	EndGlobalSection
+EndGlobal

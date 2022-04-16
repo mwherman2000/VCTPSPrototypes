@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UBL21Credentials;
-using VCTPSCommon;
+using VCTPS.UBL21Credentials;
+using VCTPS.Common;
 using Google.Protobuf;
-using VCTPSProtocol;
+using VCTPS.Protocol;
 
-namespace VCTPSPrototype5
+namespace VCTPS.CredentialWallet
 {
     public static class CredentialWallet
     {

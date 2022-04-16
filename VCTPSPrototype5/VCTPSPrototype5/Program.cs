@@ -13,6 +13,7 @@ using Okapi.Keys;
 using VCTPSCommon;
 using System.Reflection;
 using VCTPSProtocol;
+using CredentialWallet;
 
 namespace VCTPSPrototype5;
 
@@ -61,8 +62,8 @@ public class Program
         vcaJson = Helpers.GetTemplate(assembly, "VCTPSPrototype5.vca2.json");
         vcaackJson = Helpers.GetTemplate(assembly, "VCTPSPrototype5.vcaack2.json");
 
-        CredentialWallet.InitializeItems();
-        CredentialWallet.InitializeParties();
+        WalletHelpers.InitializeItems();
+        WalletHelpers.InitializeParties();
 
         string grantedkey = KeyVault.FindKey("Delta");
         string vcakid = DIDKey.Generate(new GenerateKeyRequest { KeyType = KeyType.X25519 }).Key[0].Kid;
