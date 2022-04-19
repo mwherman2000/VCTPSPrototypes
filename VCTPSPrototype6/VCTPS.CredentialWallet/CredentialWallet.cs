@@ -568,8 +568,8 @@ namespace VCTPS.CredentialWallet
                 VCTPS_VCA_SealedEnvelope vca = VCTPSCredentialFactory.NewVCACredential("*", udid, rights, null, processing, proofSk, DefaultNonce64);
                 string vcaJson = vca.ToString();
 
-                Cac_AccountingSupplierParty accountingsupplierparty = new Cac_AccountingSupplierParty(WalletHelpers.FindKey("Darla Accounting", RegistryType.Party));
-                Cac_AccountingCustomerParty accountingcustomerparty = new Cac_AccountingCustomerParty(WalletHelpers.FindKey("Mark Accounting", RegistryType.Party));
+                Cac_AccountingCustomerParty accountingcustomerparty = new Cac_AccountingCustomerParty(WalletHelpers.FindKey("Bob Buyer", RegistryType.Party));
+                Cac_AccountingSupplierParty accountingsupplierparty = new Cac_AccountingSupplierParty(WalletHelpers.FindKey("Mark Accounting", RegistryType.Party));
                 Cac_PayeeParty payeeparty = new Cac_PayeeParty(WalletHelpers.FindKey("Mark Accounting", RegistryType.Party));
                 string deliverykey = WalletHelpers.FindKey("Bob Buyer", RegistryType.Party);
                 Cac_Party_Claims deliveryclaims = (Cac_Party_Claims)PartyDirectory[deliverykey].envelope.content.claims;
@@ -590,7 +590,7 @@ namespace VCTPS.CredentialWallet
               
                 UBL21_Invoice2_Claims subject_claims = UBL21CredentialFactory.NewInvoiceClaims(DateTime.UtcNow,
                     new Cbc_ListCode("1234", "1234", "1234"),
-                    new Cbc_Note(ISO639_1_LanguageCodes.en, "Invoice 1234"),
+                    new Cbc_Note(ISO639_1_LanguageCodes.en, "Invoice 1234 for ABC Cabbages for 100 lb. of cabbages"),
                     DateTime.UtcNow,
                     new Cbc_ListCode("1234", "1234", "1234"),
                     "1234.00",

@@ -16,18 +16,18 @@ namespace VCTPS.UBL21Credentials
         public static string UBLPartyType = "UBL22Party";
         public static string UBLInvoiceType = "UBL22Invoice2";
 
-        public static Cac_Item_Claims NewItemClaims(
+        public static Cac_Item NewItemClaims(
                 string cbc_Name,
-                Cac_SellersItemIdentification cac_SellersItemIdentification,
+                Cac_ItemIdentification cac_SellersItemIdentification,
                 Cbc_SchemeCode cac_StandardItemIdentification,
                 List<Cbc_ListCode> cac_CommodityClassification,
-                Cac_ClassifiedTaxCategory cac_ClassifiedTaxCategory
+                List<Cac_TaxCategory> cac_ClassifiedTaxCategory
             )
         {
             string cbc_UBLVersionID = UBLVERSIONID;
             string cbc_ID = Guid.NewGuid().ToString();
 
-            Cac_Item_Claims claims = new Cac_Item_Claims(
+            Cac_Item claims = new Cac_Item(
                 cbc_UBLVersionID,
                 cbc_ID,
                 cbc_Name,
@@ -40,25 +40,25 @@ namespace VCTPS.UBL21Credentials
             return claims;
         }
 
-        public static Cac_Item_SealedEnvelope NewItemCredential(string udid, VCTPS_VCA_SealedEnvelope vca, Cac_Item_Claims claims, ByteString proofSk, string nonce64)
+        public static UBL22_Item_SealedEnvelope NewItemCredential(string udid, VCTPS_VCA_SealedEnvelope vca, Cac_Item claims, ByteString proofSk, string nonce64)
         {
-            Cac_Item_EnvelopeContent content = new Cac_Item_EnvelopeContent(udid, BTTGenericCredential.DefaultContext, udid, claims, null);
+            UBL22_Item_EnvelopeContent content = new UBL22_Item_EnvelopeContent(udid, BTTGenericCredential.DefaultContext, udid, claims, null);
             List<string> types = new List<string>(BTTGenericCredential.RootType);
             types.Add(UBLItemType);
             string vca64 = Helpers.ToBase64String(vca.ToString());
             BTTGenericCredential_PackingLabel label = new BTTGenericCredential_PackingLabel(types,
                 BTTGenericCredentialType.UBLDocument, 0, BTTTrustLevel.OberonProof, BTTEncryptionFlag.NotEncrypted, null, "Item " + udid, new List<string> { "Item " + udid }, vca64);
-            Cac_Item_Envelope envelope = new Cac_Item_Envelope(udid, label, content);
+            UBL22_Item_Envelope envelope = new UBL22_Item_Envelope(udid, label, content);
             string json = envelope.ToString();
             string hash64 = SHA256Helpers.ComputeHash(json);
             string hashproof64 = ProofHelpers.ComputeHashProof(hash64, proofSk, nonce64);
             BTTGenericCredential_EnvelopeSeal proof = new BTTGenericCredential_EnvelopeSeal(hash64, hashproof64);
-            Cac_Item_SealedEnvelope sealedenvelope = new Cac_Item_SealedEnvelope(envelope, proof);
+            UBL22_Item_SealedEnvelope sealedenvelope = new UBL22_Item_SealedEnvelope(envelope, proof);
 
             return sealedenvelope;
         }
 
-        public static Cac_Party_Claims NewPartyClaims(
+        public static Cac_Party NewPartyClaims(
             Cbc_SchemeCode cbc_EndpointID,
             Cac_PartyIdentification cbc_PartyIdentification,
             Cac_PartyName cbc_PartyName,
@@ -73,7 +73,7 @@ namespace VCTPS.UBL21Credentials
             string cbc_UBLVersionID = UBLVERSIONID;
             string cbc_ID = Guid.NewGuid().ToString();
 
-            Cac_Party_Claims claims = new Cac_Party_Claims(
+            Cac_Party claims = new Cac_Party(
                 cbc_UBLVersionID, 
                 cbc_ID,
                 cbc_EndpointID,
@@ -89,25 +89,25 @@ namespace VCTPS.UBL21Credentials
             return claims;
         }
 
-        public static Cac_Party_SealedEnvelope NewPartyCredential(string udid, VCTPS_VCA_SealedEnvelope vca, Cac_Party_Claims claims, ByteString proofSk, string nonce64)
+        public static UBL22_Party_SealedEnvelope NewPartyCredential(string udid, VCTPS_VCA_SealedEnvelope vca, Cac_Party claims, ByteString proofSk, string nonce64)
         {
-            Cac_Party_EnvelopeContent content = new Cac_Party_EnvelopeContent(udid, BTTGenericCredential.DefaultContext, udid, claims, null);
+            UBL22_Party_EnvelopeContent content = new UBL22_Party_EnvelopeContent(udid, BTTGenericCredential.DefaultContext, udid, claims, null);
             List<string> types = new List<string>(BTTGenericCredential.RootType);
             types.Add(UBLPartyType);
             string vca64 = Helpers.ToBase64String(vca.ToString());
             BTTGenericCredential_PackingLabel label = new BTTGenericCredential_PackingLabel(types,
                 BTTGenericCredentialType.UBLDocument, 0, BTTTrustLevel.OberonProof, BTTEncryptionFlag.NotEncrypted, null, "Party " + udid, new List<string> { "Party " + udid }, vca64);
-            Cac_Party_Envelope envelope = new Cac_Party_Envelope(udid, label, content);
+            UBL22_Party_Envelope envelope = new UBL22_Party_Envelope(udid, label, content);
             string json = envelope.ToString();
             string hash64 = SHA256Helpers.ComputeHash(json);
             string hashproof64 = ProofHelpers.ComputeHashProof(hash64, proofSk, nonce64);
             BTTGenericCredential_EnvelopeSeal proof = new BTTGenericCredential_EnvelopeSeal(hash64, hashproof64);
-            Cac_Party_SealedEnvelope sealedenvelope = new Cac_Party_SealedEnvelope(envelope, proof);
+            UBL22_Party_SealedEnvelope sealedenvelope = new UBL22_Party_SealedEnvelope(envelope, proof);
 
             return sealedenvelope;
         }
 
-        public static UBL21_Invoice2_Claims NewInvoiceClaims(
+        public static Cac_Invoice NewInvoiceClaims(
             DateTime cbc_IssueDate,
             Cbc_ListCode cbc_InvoiceTypeCode,
             Cbc_Note cbc_Note,
@@ -138,7 +138,7 @@ namespace VCTPS.UBL21Credentials
             string cbc_UBLVersionID = UBLVERSIONID;
             string cbc_ID = Guid.NewGuid().ToString();
 
-            UBL21_Invoice2_Claims claims = new UBL21_Invoice2_Claims(
+            Cac_Invoice claims = new Cac_Invoice(
                 cbc_UBLVersionID, 
                 cbc_ID,
                 cbc_IssueDate,
@@ -170,20 +170,20 @@ namespace VCTPS.UBL21Credentials
             return claims;
         }
 
-        public static UBL21_Invoice2_SealedEnvelope NewInvoiceCredential(string udid, VCTPS_VCA_SealedEnvelope vca, UBL21_Invoice2_Claims claims, ByteString proofSk, string nonce64)
+        public static UBL22_Invoice_SealedEnvelope NewInvoiceCredential(string udid, VCTPS_VCA_SealedEnvelope vca, Calc_Invoice claims, ByteString proofSk, string nonce64)
         {
-            UBL21_Invoice2_EnvelopeContent content = new UBL21_Invoice2_EnvelopeContent(udid, BTTGenericCredential.DefaultContext, udid, claims, null);
+            UBL22_Invoice_EnvelopeContent content = new UBL22_Invoice_EnvelopeContent(udid, BTTGenericCredential.DefaultContext, udid, claims, null);
             List<string> types = new List<string>(BTTGenericCredential.RootType);
             types.Add(UBLInvoiceType);
             string vca64 = Helpers.ToBase64String(vca.ToString());
             BTTGenericCredential_PackingLabel label = new BTTGenericCredential_PackingLabel(types,
                 BTTGenericCredentialType.UBLDocument, 0, BTTTrustLevel.OberonProof, BTTEncryptionFlag.NotEncrypted, null, "Invoice " + udid, new List<string> { "Invoice " + udid }, vca64);
-            UBL21_Invoice2_Envelope envelope = new UBL21_Invoice2_Envelope(udid, label, content);
+            UBL22_Invoice_Envelope envelope = new UBL22_Invoice_Envelope(udid, label, content);
             string json = envelope.ToString();
             string hash64 = SHA256Helpers.ComputeHash(json);
             string hashproof64 = ProofHelpers.ComputeHashProof(hash64, proofSk, nonce64);
             BTTGenericCredential_EnvelopeSeal proof = new BTTGenericCredential_EnvelopeSeal(hash64, hashproof64);
-            UBL21_Invoice2_SealedEnvelope invoice = new UBL21_Invoice2_SealedEnvelope(envelope, proof);
+            UBL22_Invoice_SealedEnvelope invoice = new UBL22_Invoice_SealedEnvelope(envelope, proof);
 
             return invoice;
        }

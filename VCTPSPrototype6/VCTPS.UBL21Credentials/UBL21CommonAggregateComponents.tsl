@@ -1,226 +1,1803 @@
-// Trusted Digial Web Project
-// Hyperonomy Digital Identity Lab
-// Parallelspace Corporation
-// (c) Copyright 2021 Parallelspace Corporation. All Rights Reserved
-
-// http://docs.oasis-open.org/ubl/os-UBL-2.1/UBL-2.1.html#T-INVOICE
-// http://docs.oasis-open.org/ubl/os-UBL-2.1/xml/UBL-Invoice-2.1-Example.xml
-// https://docs.oasis-open.org/ubl/os-UBL-2.3/xml/UBL-Invoice-2.1-Example-Trivial.xml
-
-// Context:
-// <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
-//	xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
-//	xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
-// UBLVersionID: 2.1
-
-//include "../TDW.TRACommon/UBL21CommonBasicComponents.tsl";
-
-//////////////////////////////////////////////////////////////////////////////
-/// UBL 2.1 Common Aggregate Components
-
-struct Cac_AccountingSupplierParty
-{
-	string cac_PartyUdid; // Cac_Party_SealedEnvelope;
-}
-
-struct Cac_AccountingCustomerParty
-{
-	string cac_PartyUdid; // Cac_Party_SealedEnvelope;
-}
-
 struct Cac_Address
 {
-	string cbc_ID;
-	string cbc_PostBox;
-	string cbc_StreetName;
-	string cbc_AdditionalStreetName;
-	string cbc_BuildingNumber;
-	string cbc_Department;
-	string cbc_CityName;
-	string cbc_PostalZone;
-	string cbc_CountrySubentityCode;
-	Cac_Country cbc_Country;
+	optional string	cbc_ID;
+	optional string	cbc_AddressTypeCode;
+	optional string	cbc_AddressFormatCode;
+	optional string	cbc_Postbox;
+	optional string	cbc_Floor;
+	optional string	cbc_Room;
+	optional string	cbc_StreetName;
+	optional string	cbc_AdditionalStreetName;
+	optional string	cbc_BlockName;
+	optional string	cbc_BuildingName;
+	optional string	cbc_BuildingNumber;
+	optional string	cbc_InhouseMail;
+	optional string	cbc_Department;
+	optional string	cbc_MarkAttention;
+	optional string	cbc_MarkCare;
+	optional string	cbc_PlotIdentification;
+	optional string	cbc_CitySubdivisionName;
+	optional string	cbc_CityName;
+	optional string	cbc_PostalZone;
+	optional string	cbc_CountrySubentity;
+	optional string	cbc_CountrySubentityCode;
+	optional string	cbc_Region;
+	optional string	cbc_District;
+	optional string	cbc_TimezoneOffset;
+	optional List<Cac_AddressLine>	cac_AddressLine;
+	optional Cac_Country	cac_Country;
+	optional List<Cac_LocationCoordinate>	cac_LocationCoordinate;
+}
+
+struct Cac_AddressLine
+{
+	string	cbc_Line;
+}
+
+struct Cac_AirTransport
+{
+	string	cbc_AircraftID;
 }
 
 struct Cac_AllowanceCharge
 {
-	bool cbc_ChargeIndicator;
-	string cbc_AllowanceChargeReason;
-	Cbc_Amount cbc_Amount;
+	optional string	cbc_ID;
+	string	cbc_ChargeIndicator;
+	optional string	cbc_AllowanceChargeReasonCode;
+	optional List<string>	cbc_AllowanceChargeReason;
+	optional string	cbc_MultiplierFactorNumeric;
+	optional string	cbc_PrepaidIndicator;
+	optional string	cbc_SequenceNumeric;
+	string	cbc_Amount;
+	optional string	cbc_BaseAmount;
+	optional string	cbc_AccountingCostCode;
+	optional string	cbc_AccountingCost;
+	optional string	cbc_PerUnitAmount;
+	optional List<Cac_TaxCategory>	cac_TaxCategory;
+	optional Cac_TaxTotal	cac_TaxTotal;
+	optional List<Cac_PaymentMeans>	cac_PaymentMeans;
 }
 
 struct Cac_Attachment
 {
-	Cac_ExternalReference cac_ExternalReference;
+	optional string	cbc_EmbeddedDocumentBinaryObject;
+	optional Cac_ExternalReference	cac_ExternalReference;
 }
 
-struct Cac_ClassifiedTaxCategory
+struct Cac_BillingReference
 {
-	Cbc_SchemeCode cbc_ID;
-	double cbc_Percent;
-	Cac_TaxScheme cac_TaxScheme;
+	optional Cac_DocumentReference	cac_InvoiceDocumentReference;
+	optional Cac_DocumentReference	cac_SelfBilledInvoiceDocumentReference;
+	optional Cac_DocumentReference	cac_CreditNoteDocumentReference;
+	optional Cac_DocumentReference	cac_SelfBilledCreditNoteDocumentReference;
+	optional Cac_DocumentReference	cac_DebitNoteDocumentReference;
+	optional Cac_DocumentReference	cac_ReminderDocumentReference;
+	optional Cac_DocumentReference	cac_AdditionalDocumentReference;
+	optional List<Cac_BillingReferenceLine>	cac_BillingReferenceLine;
+}
+
+struct Cac_BillingReferenceLine
+{
+	string	cbc_ID;
+	optional string	cbc_Amount;
+	optional List<Cac_AllowanceCharge>	cac_AllowanceCharge;
+}
+
+struct Cac_Branch
+{
+	optional string	cbc_ID;
+	optional string	cbc_Name;
+	optional Cac_FinancialInstitution	cac_FinancialInstitution;
+	optional Cac_Address	cac_Address;
+}
+
+struct Cac_CardAccount
+{
+	string	cbc_PrimaryAccountNumberID;
+	string	cbc_NetworkID;
+	optional string	cbc_CardTypeCode;
+	optional DateTime	cbc_ValidityStartDate;
+	optional DateTime	cbc_ExpiryDate;
+	optional string	cbc_IssuerID;
+	optional string	cbc_IssueNumberID;
+	optional string	cbc_CV2ID;
+	optional string	cbc_CardChipCode;
+	optional string	cbc_ChipApplicationID;
+	optional string	cbc_HolderName;
+}
+
+struct Cac_CatalogueReference
+{
+	string	cbc_ID;
+	optional string	cbc_UUID;
+	optional DateTime	cbc_IssueDate;
+	optional DateTime	cbc_IssueTime;
+	optional DateTime	cbc_RevisionDate;
+	optional DateTime	cbc_RevisionTime;
+	optional List<string>	cbc_Note;
+	optional List<string>	cbc_Description;
+	optional string	cbc_VersionID;
+	optional string	cbc_PreviousVersionID;
+}
+
+struct Cac_Certificate
+{
+	string	cbc_ID;
+	string	cbc_CertificateTypeCode;
+	string	cbc_CertificateType;
+	optional List<string>	cbc_Remarks;
+	string	cac_IssuerPartyUdid; // Cac_Party
+	optional List<Cac_DocumentReference>	cac_DocumentReference;
+	optional List<Cac_Signature>	cac_Signature;
+}
+
+struct Cac_Clause
+{
+	optional string	cbc_ID;
+	optional List<string>	cbc_Content;
+}
+
+struct Cac_CommodityClassification
+{
+	optional string	cbc_NatureCode;
+	optional string	cbc_CargoTypeCode;
+	optional string	cbc_CommodityCode;
+	optional string	cbc_ItemClassificationCode;
+}
+
+struct Cac_Communication
+{
+	optional string	cbc_ChannelCode;
+	optional string	cbc_Channel;
+	optional string	cbc_Value;
+}
+
+struct Cac_Condition
+{
+	string	cbc_AttributeID;
+	optional string	cbc_Measure;
+	optional List<string>	cbc_Description;
+	optional string	cbc_MinimumMeasure;
+	optional string	cbc_MaximumMeasure;
+}
+
+struct Cac_Consignment
+{
+	string	cbc_ID;
+	optional string	cbc_CarrierAssignedID;
+	optional string	cbc_ConsigneeAssignedID;
+	optional string	cbc_ConsignorAssignedID;
+	optional string	cbc_FreightForwarderAssignedID;
+	optional string	cbc_BrokerAssignedID;
+	optional string	cbc_ContractedCarrierAssignedID;
+	optional string	cbc_PerformingCarrierAssignedID;
+	optional List<string>	cbc_SummaryDescription;
+	optional string	cbc_TotalInvoiceAmount;
+	optional string	cbc_DeclaredCustomsValueAmount;
+	optional List<string>	cbc_TariffDescription;
+	optional string	cbc_TariffCode;
+	optional string	cbc_InsurancePremiumAmount;
+	optional string	cbc_GrossWeightMeasure;
+	optional string	cbc_NetWeightMeasure;
+	optional string	cbc_NetNetWeightMeasure;
+	optional string	cbc_ChargeableWeightMeasure;
+	optional string	cbc_GrossVolumeMeasure;
+	optional string	cbc_NetVolumeMeasure;
+	optional string	cbc_LoadingLengthMeasure;
+	optional List<string>	cbc_Remarks;
+	optional string	cbc_HazardousRiskIndicator;
+	optional string	cbc_AnimalFoodIndicator;
+	optional string	cbc_HumanFoodIndicator;
+	optional string	cbc_LivestockIndicator;
+	optional string	cbc_BulkCargoIndicator;
+	optional string	cbc_ContainerizedIndicator;
+	optional string	cbc_GeneralCargoIndicator;
+	optional string	cbc_SpecialSecurityIndicator;
+	optional string	cbc_ThirdPartyPayerIndicator;
+	optional List<string>	cbc_CarrierServiceInstructions;
+	optional List<string>	cbc_CustomsClearanceServiceInstructions;
+	optional List<string>	cbc_ForwarderServiceInstructions;
+	optional List<string>	cbc_SpecialServiceInstructions;
+	optional string	cbc_SequenceID;
+	optional string	cbc_ShippingPriorityLevelCode;
+	optional string	cbc_HandlingCode;
+	optional List<string>	cbc_HandlingInstructions;
+	optional List<string>	cbc_Information;
+	optional string	cbc_TotalGoodsItemQuantity;
+	optional string	cbc_TotalTransportHandlingUnitQuantity;
+	optional string	cbc_InsuranceValueAmount;
+	optional string	cbc_DeclaredForCarriageValueAmount;
+	optional string	cbc_DeclaredStatisticsValueAmount;
+	optional string	cbc_FreeOnBoardValueAmount;
+	optional List<string>	cbc_SpecialInstructions;
+	optional string	cbc_SplitConsignmentIndicator;
+	optional List<string>	cbc_DeliveryInstructions;
+	optional string	cbc_ConsignmentQuantity;
+	optional string	cbc_ConsolidatableIndicator;
+	optional List<string>	cbc_HaulageInstructions;
+	optional string	cbc_LoadingSequenceID;
+	optional string	cbc_ChildConsignmentQuantity;
+	optional string	cbc_TotalPackagesQuantity;
+	optional List<string>	cac_ConsolidatedShipmentUdid; // optional Cac_Shipment
+	optional List<Cac_CustomsDeclaration>	cac_CustomsDeclaration;
+	optional string	cac_RequestedPickupTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_RequestedDeliveryTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_PlannedPickupTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_PlannedDeliveryTransportEventUdid; // optional Cac_TransportEvent
+	optional List<Cac_Status>	cac_Status;
+	optional List<string>	cac_ChildConsignmentUdid; // optional Cac_Consignment
+	optional string	cac_ConsigneePartyUdid; // optional Cac_Party
+	optional string	cac_ExporterPartyUdid; // optional Cac_Party
+	optional string	cac_ConsignorPartyUdid; // optional Cac_Party
+	optional string	cac_ImporterPartyUdid; // optional Cac_Party
+	optional string	cac_CarrierPartyUdid; // optional Cac_Party
+	optional string	cac_FreightForwarderPartyUdid; // optional Cac_Party
+	optional string	cac_NotifyPartyUdid; // optional Cac_Party
+	optional string	cac_OriginalDespatchPartyUdid; // optional Cac_Party
+	optional string	cac_FinalDeliveryPartyUdid; // optional Cac_Party
+	optional string	cac_PerformingCarrierPartyUdid; // optional Cac_Party
+	optional string	cac_SubstituteCarrierPartyUdid; // optional Cac_Party
+	optional string	cac_LogisticsOperatorPartyUdid; // optional Cac_Party
+	optional string	cac_TransportAdvisorPartyUdid; // optional Cac_Party
+	optional string	cac_HazardousItemNotificationPartyUdid; // optional Cac_Party
+	optional string	cac_InsurancePartyUdid; // optional Cac_Party
+	optional string	cac_MortgageHolderPartyUdid; // optional Cac_Party
+	optional string	cac_BillOfLadingHolderPartyUdid; // optional Cac_Party
+	optional Cac_Country	cac_OriginalDepartureCountry;
+	optional Cac_Country	cac_FinalDestinationCountry;
+	optional List<Cac_Country>	cac_TransitCountry;
+	optional Cac_Contract	cac_TransportContract;
+	optional List<string>	cac_TransportEventUdid; // optional Cac_TransportEvent
+	optional Cac_TransportationService	cac_OriginalDespatchTransportationService;
+	optional Cac_TransportationService	cac_FinalDeliveryTransportationService;
+	optional Cac_DeliveryTerms	cac_DeliveryTerms;
+	optional Cac_PaymentTerms	cac_PaymentTerms;
+	optional Cac_PaymentTerms	cac_CollectPaymentTerms;
+	optional Cac_PaymentTerms	cac_DisbursementPaymentTerms;
+	optional Cac_PaymentTerms	cac_PrepaidPaymentTerms;
+	optional List<Cac_AllowanceCharge>	cac_FreightAllowanceCharge;
+	optional List<Cac_AllowanceCharge>	cac_ExtraAllowanceCharge;
+	optional List<Cac_ShipmentStage>	cac_MainCarriageShipmentStage;
+	optional List<Cac_ShipmentStage>	cac_PreCarriageShipmentStage;
+	optional List<Cac_ShipmentStage>	cac_OnCarriageShipmentStage;
+	optional List<Cac_TransportHandlingUnit>	cac_TransportHandlingUnit;
+	optional string	cac_FirstArrivalPortLocationUdid; // optional Cac_Location
+	optional string	cac_LastExitPortLocationUdid; // optional Cac_Location
 }
 
 struct Cac_Contact
 {
-	optional string cbc_Telephone;
-	optional string cbc_Telefax;
-	optional string cbc_ElectronicMail;
+	optional string	cbc_ID;
+	optional string	cbc_Name;
+	optional string	cbc_Telephone;
+	optional string	cbc_Telefax;
+	optional string	cbc_ElectronicMail;
+	optional List<string>	cbc_Note;
+	optional List<Cac_Communication>	cac_OtherCommunication;
+}
+
+struct Cac_Contract
+{
+	optional string	cbc_ID;
+	optional DateTime	cbc_IssueDate;
+	optional DateTime	cbc_IssueTime;
+	optional DateTime	cbc_NominationDate;
+	optional DateTime	cbc_NominationTime;
+	optional string	cbc_ContractTypeCode;
+	optional string	cbc_ContractType;
+	optional List<string>	cbc_Note;
+	optional string	cbc_VersionID;
+	optional List<string>	cbc_Description;
+	optional Cac_Period	cac_ValidityPeriod;
+	optional List<Cac_DocumentReference>	cac_ContractDocumentReference;
+	optional Cac_Period	cac_NominationPeriod;
+	optional Cac_Delivery	cac_ContractualDelivery;
+}
+
+struct Cac_CorporateRegistrationScheme
+{
+	optional string	cbc_ID;
+	optional string	cbc_Name;
+	optional string	cbc_CorporateRegistrationTypeCode;
+	optional List<Cac_Address>	cac_JurisdictionRegionAddress;
 }
 
 struct Cac_Country
 {
-	Cbc_ListCode cbc_IdentificationCode;		
+	optional string	cbc_IdentificationCode;
+	optional string	cbc_Name;
+}
+
+struct Cac_CreditAccount
+{
+	string	cbc_AccountID;
+}
+
+struct Cac_CustomerParty
+{
+	optional string	cbc_CustomerAssignedAccountID;
+	optional string	cbc_SupplierAssignedAccountID;
+	optional List<string>	cbc_AdditionalAccountID;
+	optional string	cac_PartyUdid; // optional Cac_Party
+	optional Cac_Contact	cac_DeliveryContact;
+	optional Cac_Contact	cac_AccountingContact;
+	optional Cac_Contact	cac_BuyerContact;
+}
+
+struct Cac_CustomsDeclaration
+{
+	string	cbc_ID;
+	optional string	cac_IssuerPartyUdid; // optional Cac_Party
 }
 
 struct Cac_Delivery
 {
-	DateTime cbc_ActualDeliveryDate;	
-	Cac_DeliveryLocation cac_DeliveryLocation;
+	optional string	cbc_ID;
+	optional string	cbc_Quantity;
+	optional string	cbc_MinimumQuantity;
+	optional string	cbc_MaximumQuantity;
+	optional DateTime	cbc_ActualDeliveryDate;
+	optional DateTime	cbc_ActualDeliveryTime;
+	optional DateTime	cbc_LatestDeliveryDate;
+	optional DateTime	cbc_LatestDeliveryTime;
+	optional string	cbc_ReleaseID;
+	optional string	cbc_TrackingID;
+	optional Cac_Address	cac_DeliveryAddress;
+	optional string	cac_DeliveryLocationUdid; // optional Cac_Location
+	optional string	cac_AlternativeDeliveryLocationUdid; // optional Cac_Location
+	optional Cac_Period	cac_RequestedDeliveryPeriod;
+	optional Cac_Period	cac_PromisedDeliveryPeriod;
+	optional Cac_Period	cac_EstimatedDeliveryPeriod;
+	optional string	cac_CarrierPartyUdid; // optional Cac_Party
+	optional string	cac_DeliveryPartyUdid; // optional Cac_Party
+	optional List<string>	cac_NotifyPartyUdid; // optional Cac_Party
+	optional Cac_Despatch	cac_Despatch;
+	optional List<Cac_DeliveryTerms>	cac_DeliveryTerms;
+	optional Cac_DeliveryUnit	cac_MinimumDeliveryUnit;
+	optional Cac_DeliveryUnit	cac_MaximumDeliveryUnit;
+	optional string	cac_ShipmentUdid; // optional Cac_Shipment
 }
 
-struct Cac_DeliveryLocation
+struct Cac_DeliveryTerms
 {
-	Cbc_SchemeCode cbc_ID;
-	Cac_Address cac_Address;
+	optional string	cbc_ID;
+	optional List<string>	cbc_SpecialTerms;
+	optional string	cbc_LossRiskResponsibilityCode;
+	optional List<string>	cbc_LossRisk;
+	optional string	cbc_Amount;
+	optional string	cac_DeliveryLocationUdid; // optional Cac_Location
+	optional Cac_AllowanceCharge	cac_AllowanceCharge;
+}
+
+struct Cac_DeliveryUnit
+{
+	string	cbc_BatchQuantity;
+	optional string	cbc_ConsumerUnitQuantity;
+	optional string	cbc_HazardousRiskIndicator;
+}
+
+struct Cac_DependentPriceReference
+{
+	optional string	cbc_Percent;
+	optional Cac_Address	cac_LocationAddress;
+	optional Cac_LineReference	cac_DependentLineReference;
+}
+
+struct Cac_Despatch
+{
+	optional string	cbc_ID;
+	optional DateTime	cbc_RequestedDespatchDate;
+	optional DateTime	cbc_RequestedDespatchTime;
+	optional DateTime	cbc_EstimatedDespatchDate;
+	optional DateTime	cbc_EstimatedDespatchTime;
+	optional DateTime	cbc_ActualDespatchDate;
+	optional DateTime	cbc_ActualDespatchTime;
+	optional DateTime	cbc_GuaranteedDespatchDate;
+	optional DateTime	cbc_GuaranteedDespatchTime;
+	optional string	cbc_ReleaseID;
+	optional List<string>	cbc_Instructions;
+	optional Cac_Address	cac_DespatchAddress;
+	optional string	cac_DespatchLocationUdid; // optional Cac_Location
+	optional string	cac_DespatchPartyUdid; // optional Cac_Party
+	optional string	cac_CarrierPartyUdid; // optional Cac_Party
+	optional List<string>	cac_NotifyPartyUdid; // optional Cac_Party
+	optional Cac_Contact	cac_Contact;
+	optional Cac_Period	cac_EstimatedDespatchPeriod;
+	optional Cac_Period	cac_RequestedDespatchPeriod;
+}
+
+struct Cac_DespatchLine
+{
+	string	cbc_ID;
+	optional string	cbc_UUID;
+	optional List<string>	cbc_Note;
+	optional string	cbc_LineStatusCode;
+	optional string	cbc_DeliveredQuantity;
+	optional string	cbc_BackorderQuantity;
+	optional List<string>	cbc_BackorderReason;
+	optional string	cbc_OutstandingQuantity;
+	optional List<string>	cbc_OutstandingReason;
+	optional string	cbc_OversupplyQuantity;
+	List<Cac_OrderLineReference>	cac_OrderLineReference;
+	optional List<Cac_DocumentReference>	cac_DocumentReference;
+	Cac_Item	cac_Item;
+	optional List<string>	cac_ShipmentUdid; // optional Cac_Shipment
+}
+
+struct Cac_Dimension
+{
+	string	cbc_AttributeID;
+	optional string	cbc_Measure;
+	optional List<string>	cbc_Description;
+	optional string	cbc_MinimumMeasure;
+	optional string	cbc_MaximumMeasure;
+}
+
+struct Cac_DocumentDistribution
+{
+	string	cbc_PrintQualifier;
+	string	cbc_MaximumCopiesNumeric;
+	string	cac_PartyUdid; // Cac_Party
 }
 
 struct Cac_DocumentReference
 {
-	string ID;
-	string DocumentType;
-	optional Cac_Attachment cac_Attachment;
+	string	cbc_ID;
+	optional string	cbc_CopyIndicator;
+	optional string	cbc_UUID;
+	optional DateTime	cbc_IssueDate;
+	optional DateTime	cbc_IssueTime;
+	optional string	cbc_DocumentTypeCode;
+	optional string	cbc_DocumentType;
+	optional List<string>	cbc_XPath;
+	optional string	cbc_LanguageID;
+	optional string	cbc_LocaleCode;
+	optional string	cbc_VersionID;
+	optional string	cbc_DocumentStatusCode;
+	optional List<string>	cbc_DocumentDescription;
+	optional Cac_Attachment	cac_Attachment;
+	optional Cac_Period	cac_ValidityPeriod;
+	optional string	cac_IssuerPartyUdid; // optional Cac_Party
+	optional Cac_ResultOfVerification	cac_ResultOfVerification;
 }
 
-struct Cbc_EmbeddedDocumentBinaryObject
+struct Cac_EmissionCalculationMethod
 {
-	string _mimeCode;
-	string binary16;
+	optional string	cbc_CalculationMethodCode;
+	optional string	cbc_FullnessIndicationCode;
+	optional string	cac_MeasurementFromLocationUdid; // optional Cac_Location
+	optional string	cac_MeasurementToLocationUdid; // optional Cac_Location
+}
+
+struct Cac_EnvironmentalEmission
+{
+	string	cbc_EnvironmentalEmissionTypeCode;
+	string	cbc_ValueMeasure;
+	optional List<string>	cbc_Description;
+	optional List<Cac_EmissionCalculationMethod>	cac_EmissionCalculationMethod;
+}
+
+struct Cac_ExchangeRate
+{
+	string	cbc_SourceCurrencyCode;
+	optional string	cbc_SourceCurrencyBaseRate;
+	string	cbc_TargetCurrencyCode;
+	optional string	cbc_TargetCurrencyBaseRate;
+	optional string	cbc_ExchangeMarketID;
+	optional string	cbc_CalculationRate;
+	optional string	cbc_MathematicOperatorCode;
+	optional DateTime	cbc_Date;
+	optional Cac_Contract	cac_ForeignExchangeContract;
 }
 
 struct Cac_ExternalReference
 {
-	optional string cbc_URI;	
-	optional Cbc_EmbeddedDocumentBinaryObject cbc_EmbeddedDocumentBinaryObject;
+	optional string	cbc_URI;
+	optional string	cbc_DocumentHash;
+	optional string	cbc_HashAlgorithmMethod;
+	optional DateTime	cbc_ExpiryDate;
+	optional DateTime	cbc_ExpiryTime;
+	optional string	cbc_MimeCode;
+	optional string	cbc_FormatCode;
+	optional string	cbc_EncodingCode;
+	optional string	cbc_CharacterSetCode;
+	optional string	cbc_FileName;
+	optional List<string>	cbc_Description;
+}
+
+struct Cac_FinancialAccount
+{
+	optional string	cbc_ID;
+	optional string	cbc_Name;
+	optional string	cbc_AliasName;
+	optional string	cbc_AccountTypeCode;
+	optional string	cbc_AccountFormatCode;
+	optional string	cbc_CurrencyCode;
+	optional List<string>	cbc_PaymentNote;
+	optional Cac_Branch	cac_FinancialInstitutionBranch;
+	optional Cac_Country	cac_Country;
 }
 
 struct Cac_FinancialInstitution
 {
-	string cbc_ID;
+	optional string	cbc_ID;
+	optional string	cbc_Name;
+	optional Cac_Address	cac_Address;
 }
 
-struct Cac_FinancialInstitutionBranch
+struct Cac_GoodsItem
 {
-	Cac_FinancialInstitution cac_FinancialInstitution;
+	optional string	cbc_ID;
+	optional string	cbc_SequenceNumberID;
+	optional List<string>	cbc_Description;
+	optional string	cbc_HazardousRiskIndicator;
+	optional string	cbc_DeclaredCustomsValueAmount;
+	optional string	cbc_DeclaredForCarriageValueAmount;
+	optional string	cbc_DeclaredStatisticsValueAmount;
+	optional string	cbc_FreeOnBoardValueAmount;
+	optional string	cbc_InsuranceValueAmount;
+	optional string	cbc_ValueAmount;
+	optional string	cbc_GrossWeightMeasure;
+	optional string	cbc_NetWeightMeasure;
+	optional string	cbc_NetNetWeightMeasure;
+	optional string	cbc_ChargeableWeightMeasure;
+	optional string	cbc_GrossVolumeMeasure;
+	optional string	cbc_NetVolumeMeasure;
+	optional string	cbc_Quantity;
+	optional string	cbc_PreferenceCriterionCode;
+	optional string	cbc_RequiredCustomsID;
+	optional string	cbc_CustomsStatusCode;
+	optional string	cbc_CustomsTariffQuantity;
+	optional string	cbc_CustomsImportClassifiedIndicator;
+	optional string	cbc_ChargeableQuantity;
+	optional string	cbc_ReturnableQuantity;
+	optional string	cbc_TraceID;
+	optional List<Cac_Item>	cac_Item;
+	optional List<Cac_GoodsItemContainer>	cac_GoodsItemContainer;
+	optional List<Cac_AllowanceCharge>	cac_FreightAllowanceCharge;
+	optional List<string>	cac_InvoiceLineUdid; // optional Cac_InvoiceLine
+	optional List<Cac_Temperature>	cac_Temperature;
+	optional List<string>	cac_ContainedGoodsItemUdid; // optional Cac_GoodsItem
+	optional Cac_Address	cac_OriginAddress;
+	optional Cac_Delivery	cac_Delivery;
+	optional Cac_Pickup	cac_Pickup;
+	optional Cac_Despatch	cac_Despatch;
+	optional List<Cac_Dimension>	cac_MeasurementDimension;
+	optional List<string>	cac_ContainingPackageUdid; // optional Cac_Package
+	optional Cac_DocumentReference	cac_ShipmentDocumentReference;
+	optional Cac_Temperature	cac_MinimumTemperature;
+	optional Cac_Temperature	cac_MaximumTemperature;
+}
+
+struct Cac_GoodsItemContainer
+{
+	string	cbc_ID;
+	optional string	cbc_Quantity;
+	optional List<string>	cac_TransportEquipmentUdid; // optional Cac_TransportEquipment
+}
+
+struct Cac_HazardousGoodsTransit
+{
+	optional string	cbc_TransportEmergencyCardCode;
+	optional string	cbc_PackingCriteriaCode;
+	optional string	cbc_HazardousRegulationCode;
+	optional string	cbc_InhalationToxicityZoneCode;
+	optional string	cbc_TransportAuthorizationCode;
+	optional Cac_Temperature	cac_MaximumTemperature;
+	optional Cac_Temperature	cac_MinimumTemperature;
+}
+
+struct Cac_HazardousItem
+{
+	optional string	cbc_ID;
+	optional string	cbc_PlacardNotation;
+	optional string	cbc_PlacardEndorsement;
+	optional List<string>	cbc_AdditionalInformation;
+	optional string	cbc_UNDGCode;
+	optional string	cbc_EmergencyProceduresCode;
+	optional string	cbc_MedicalFirstAidGuideCode;
+	optional string	cbc_TechnicalName;
+	optional string	cbc_CategoryName;
+	optional string	cbc_HazardousCategoryCode;
+	optional string	cbc_UpperOrangeHazardPlacardID;
+	optional string	cbc_LowerOrangeHazardPlacardID;
+	optional string	cbc_MarkingID;
+	optional string	cbc_HazardClassID;
+	optional string	cbc_NetWeightMeasure;
+	optional string	cbc_NetVolumeMeasure;
+	optional string	cbc_Quantity;
+	optional string	cac_ContactPartyUdid; // optional Cac_Party
+	optional List<Cac_SecondaryHazard>	cac_SecondaryHazard;
+	optional List<Cac_HazardousGoodsTransit>	cac_HazardousGoodsTransit;
+	optional Cac_Temperature	cac_EmergencyTemperature;
+	optional Cac_Temperature	cac_FlashpointTemperature;
+	optional List<Cac_Temperature>	cac_AdditionalTemperature;
+}
+
+struct Cac_Invoice
+{
+	optional string	cbc_UBLVersionID;
+	optional string	cbc_CustomizationID;
+	optional string	cbc_ProfileID;
+	optional string	cbc_ProfileExecutionID;
+	string	cbc_ID;
+	optional string	cbc_CopyIndicator;
+	optional string	cbc_UUID;
+	DateTime	cbc_IssueDate;
+	optional DateTime	cbc_IssueTime;
+	optional DateTime	cbc_DueDate;
+	optional string	cbc_InvoiceTypeCode;
+	optional List<string>	cbc_Note;
+	optional DateTime	cbc_TaxPointDate;
+	optional string	cbc_DocumentCurrencyCode;
+	optional string	cbc_TaxCurrencyCode;
+	optional string	cbc_PricingCurrencyCode;
+	optional string	cbc_PaymentCurrencyCode;
+	optional string	cbc_PaymentAlternativeCurrencyCode;
+	optional string	cbc_AccountingCostCode;
+	optional string	cbc_AccountingCost;
+	optional string	cbc_LineCountNumeric;
+	optional string	cbc_BuyerReference;
+	optional List<Cac_Period>	cac_InvoicePeriod;
+	optional Cac_OrderReference	cac_OrderReference;
+	optional List<Cac_BillingReference>	cac_BillingReference;
+	optional List<Cac_DocumentReference>	cac_DespatchDocumentReference;
+	optional List<Cac_DocumentReference>	cac_ReceiptDocumentReference;
+	optional List<Cac_DocumentReference>	cac_StatementDocumentReference;
+	optional List<Cac_DocumentReference>	cac_OriginatorDocumentReference;
+	optional List<Cac_DocumentReference>	cac_ContractDocumentReference;
+	optional List<Cac_DocumentReference>	cac_AdditionalDocumentReference;
+	optional List<Cac_ProjectReference>	cac_ProjectReference;
+	optional List<Cac_Signature>	cac_Signature;
+	string	cac_AccountingSupplierPartyUdid; // Cac_SupplierParty
+	string	cac_AccountingCustomerPartyUdid; // Cac_CustomerParty
+	optional string	cac_PayeePartyUdid; // optional Cac_Party
+	optional string	cac_BuyerCustomerPartyUdid; // optional Cac_CustomerParty
+	optional string	cac_SellerSupplierPartyUdid; // optional Cac_SupplierParty
+	optional string	cac_TaxRepresentativePartyUdid; // optional Cac_Party
+	optional List<Cac_Delivery>	cac_Delivery;
+	optional Cac_DeliveryTerms	cac_DeliveryTerms;
+	optional List<Cac_PaymentMeans>	cac_PaymentMeans;
+	optional List<Cac_PaymentTerms>	cac_PaymentTerms;
+	optional List<Cac_Payment>	cac_PrepaidPayment;
+	optional List<Cac_AllowanceCharge>	cac_AllowanceCharge;
+	optional Cac_ExchangeRate	cac_TaxExchangeRate;
+	optional Cac_ExchangeRate	cac_PricingExchangeRate;
+	optional Cac_ExchangeRate	cac_PaymentExchangeRate;
+	optional Cac_ExchangeRate	cac_PaymentAlternativeExchangeRate;
+	optional List<Cac_TaxTotal>	cac_TaxTotal;
+	optional List<Cac_TaxTotal>	cac_WithholdingTaxTotal;
+	Cac_MonetaryTotal	cac_LegalMonetaryTotal;
+	List<string>	cac_InvoiceLineUdid; // Cac_InvoiceLine
 }
 
 struct Cac_InvoiceLine
 {
-	string cbc_ID;
-	Cbc_Note cbc_Note;
-	Cbc_Quantity cbc_InvoicedQuantity;
-	Cbc_Amount cbc_LineExtensionAmount;
-	string cbc_AccountingCost;
-	Cac_OrderLineReference cac_OrderLineReference;
-	List<Cac_AllowanceCharge> cac_AllowanceCharges;
-	Cac_TaxTotal cac_TaxTotal;
-	string cac_ItemUdid;							// Cac_Item_SealedEnvelope
-	Cac_Price cac_Price;
+	string	cbc_ID;
+	optional string	cbc_UUID;
+	optional List<string>	cbc_Note;
+	optional string	cbc_InvoicedQuantity;
+	string	cbc_LineExtensionAmount;
+	optional DateTime	cbc_TaxPointDate;
+	optional string	cbc_AccountingCostCode;
+	optional string	cbc_AccountingCost;
+	optional string	cbc_PaymentPurposeCode;
+	optional string	cbc_FreeOfChargeIndicator;
+	optional List<Cac_Period>	cac_InvoicePeriod;
+	optional List<Cac_OrderLineReference>	cac_OrderLineReference;
+	optional List<Cac_LineReference>	cac_DespatchLineReference;
+	optional List<Cac_LineReference>	cac_ReceiptLineReference;
+	optional List<Cac_BillingReference>	cac_BillingReference;
+	optional List<Cac_DocumentReference>	cac_DocumentReference;
+	optional Cac_PricingReference	cac_PricingReference;
+	optional string	cac_OriginatorPartyUdid; // optional Cac_Party
+	optional List<Cac_Delivery>	cac_Delivery;
+	optional List<Cac_PaymentTerms>	cac_PaymentTerms;
+	optional List<Cac_AllowanceCharge>	cac_AllowanceCharge;
+	optional List<Cac_TaxTotal>	cac_TaxTotal;
+	optional List<Cac_TaxTotal>	cac_WithholdingTaxTotal;
+	Cac_Item	cac_Item;
+	optional Cac_Price	cac_Price;
+	optional Cac_DeliveryTerms	cac_DeliveryTerms;
+	optional List<string>	cac_SubInvoiceLineUdid; // optional Cac_InvoiceLine
+	optional Cac_PriceExtension	cac_ItemPriceExtension;
 }
 
-struct Cac_LegalMonetaryTotal
+struct Cac_Item
 {
-	Cbc_Amount cbc_LineExtensionAmount;
-	Cbc_Amount cbc_TaxExclusiveAmount;
-	Cbc_Amount cbc_TaxInclusiveAmount;
-	Cbc_Amount cbc_AllowanceTotalAmount;
-	Cbc_Amount cbc_ChargeTotalAmount;
-	Cbc_Amount cbc_PrepaidAmount;
-	Cbc_Amount cbc_PayableRoundingAmount;
-	Cbc_Amount cbc_PayableAmount;
+	optional List<string>	cbc_Description;
+	optional string	cbc_PackQuantity;
+	optional string	cbc_PackSizeNumeric;
+	optional string	cbc_CatalogueIndicator;
+	optional string	cbc_Name;
+	optional string	cbc_HazardousRiskIndicator;
+	optional List<string>	cbc_AdditionalInformation;
+	optional List<string>	cbc_Keyword;
+	optional List<string>	cbc_BrandName;
+	optional List<string>	cbc_ModelName;
+	optional Cac_ItemIdentification	cac_BuyersItemIdentification;
+	optional Cac_ItemIdentification	cac_SellersItemIdentification;
+	optional List<Cac_ItemIdentification>	cac_ManufacturersItemIdentification;
+	optional Cac_ItemIdentification	cac_StandardItemIdentification;
+	optional Cac_ItemIdentification	cac_CatalogueItemIdentification;
+	optional List<Cac_ItemIdentification>	cac_AdditionalItemIdentification;
+	optional Cac_DocumentReference	cac_CatalogueDocumentReference;
+	optional List<Cac_DocumentReference>	cac_ItemSpecificationDocumentReference;
+	optional Cac_Country	cac_OriginCountry;
+	optional List<Cac_CommodityClassification>	cac_CommodityClassification;
+	optional List<Cac_TransactionConditions>	cac_TransactionConditions;
+	optional List<Cac_HazardousItem>	cac_HazardousItem;
+	optional List<Cac_TaxCategory>	cac_ClassifiedTaxCategory;
+	optional List<Cac_ItemProperty>	cac_AdditionalItemProperty;
+	optional List<string>	cac_ManufacturerPartyUdid; // optional Cac_Party
+	optional string	cac_InformationContentProviderPartyUdid; // optional Cac_Party
+	optional List<Cac_Address>	cac_OriginAddress;
+	optional List<Cac_ItemInstance>	cac_ItemInstance;
+	optional List<Cac_Certificate>	cac_Certificate;
+	optional List<Cac_Dimension>	cac_Dimension;
+}
+
+struct Cac_ItemIdentification
+{
+	string	cbc_ID;
+	optional string	cbc_ExtendedID;
+	optional string	cbc_BarcodeSymbologyID;
+	optional List<Cac_PhysicalAttribute>	cac_PhysicalAttribute;
+	optional List<Cac_Dimension>	cac_MeasurementDimension;
+	optional string	cac_IssuerPartyUdid; // optional Cac_Party
+}
+
+struct Cac_ItemInstance
+{
+	optional string	cbc_ProductTraceID;
+	optional DateTime	cbc_ManufactureDate;
+	optional DateTime	cbc_ManufactureTime;
+	optional DateTime	cbc_BestBeforeDate;
+	optional string	cbc_RegistrationID;
+	optional string	cbc_SerialID;
+	optional List<Cac_ItemProperty>	cac_AdditionalItemProperty;
+	optional Cac_LotIdentification	cac_LotIdentification;
+}
+
+struct Cac_ItemLocationQuantity
+{
+	optional string	cbc_LeadTimeMeasure;
+	optional string	cbc_MinimumQuantity;
+	optional string	cbc_MaximumQuantity;
+	optional string	cbc_HazardousRiskIndicator;
+	optional List<string>	cbc_TradingRestrictions;
+	optional List<Cac_Address>	cac_ApplicableTerritoryAddress;
+	optional Cac_Price	cac_Price;
+	optional List<Cac_DeliveryUnit>	cac_DeliveryUnit;
+	optional List<Cac_TaxCategory>	cac_ApplicableTaxCategory;
+	optional string	cac_PackageUdid; // optional Cac_Package
+	optional List<Cac_AllowanceCharge>	cac_AllowanceCharge;
+	optional Cac_DependentPriceReference	cac_DependentPriceReference;
+}
+
+struct Cac_ItemProperty
+{
+	optional string	cbc_ID;
+	string	cbc_Name;
+	optional string	cbc_NameCode;
+	optional string	cbc_TestMethod;
+	optional string	cbc_Value;
+	optional string	cbc_ValueQuantity;
+	optional List<string>	cbc_ValueQualifier;
+	optional string	cbc_ImportanceCode;
+	optional List<string>	cbc_ListValue;
+	optional Cac_Period	cac_UsabilityPeriod;
+	optional List<Cac_ItemPropertyGroup>	cac_ItemPropertyGroup;
+	optional Cac_Dimension	cac_RangeDimension;
+	optional Cac_ItemPropertyRange	cac_ItemPropertyRange;
+}
+
+struct Cac_ItemPropertyGroup
+{
+	string	cbc_ID;
+	optional string	cbc_Name;
+	optional string	cbc_ImportanceCode;
+}
+
+struct Cac_ItemPropertyRange
+{
+	optional string	cbc_MinimumValue;
+	optional string	cbc_MaximumValue;
+}
+
+struct Cac_Language
+{
+	optional string	cbc_ID;
+	optional string	cbc_Name;
+	optional string	cbc_LocaleCode;
+}
+
+struct Cac_LineItem
+{
+	string	cbc_ID;
+	optional string	cbc_SalesOrderID;
+	optional string	cbc_UUID;
+	optional List<string>	cbc_Note;
+	optional string	cbc_LineStatusCode;
+	optional string	cbc_Quantity;
+	optional string	cbc_LineExtensionAmount;
+	optional string	cbc_TotalTaxAmount;
+	optional string	cbc_MinimumQuantity;
+	optional string	cbc_MaximumQuantity;
+	optional string	cbc_MinimumBackorderQuantity;
+	optional string	cbc_MaximumBackorderQuantity;
+	optional string	cbc_InspectionMethodCode;
+	optional string	cbc_PartialDeliveryIndicator;
+	optional string	cbc_BackOrderAllowedIndicator;
+	optional string	cbc_AccountingCostCode;
+	optional string	cbc_AccountingCost;
+	optional List<string>	cbc_WarrantyInformation;
+	optional List<Cac_Delivery>	cac_Delivery;
+	optional Cac_DeliveryTerms	cac_DeliveryTerms;
+	optional string	cac_OriginatorPartyUdid; // optional Cac_Party
+	optional List<string>	cac_OrderedShipmentUdid; // optional Cac_OrderedShipment
+	optional Cac_PricingReference	cac_PricingReference;
+	optional List<Cac_AllowanceCharge>	cac_AllowanceCharge;
+	optional Cac_Price	cac_Price;
+	Cac_Item	cac_Item;
+	optional List<string>	cac_SubLineItemUdid; // optional Cac_LineItem
+	optional Cac_Period	cac_WarrantyValidityPeriod;
+	optional string	cac_WarrantyPartyUdid; // optional Cac_Party
+	optional List<Cac_TaxTotal>	cac_TaxTotal;
+	optional Cac_PriceExtension	cac_ItemPriceExtension;
+	optional List<Cac_LineReference>	cac_LineReference;
+}
+
+struct Cac_LineReference
+{
+	string	cbc_LineID;
+	optional string	cbc_UUID;
+	optional string	cbc_LineStatusCode;
+	optional Cac_DocumentReference	cac_DocumentReference;
+}
+
+struct Cac_Location
+{
+	optional string	cbc_ID;
+	optional List<string>	cbc_Description;
+	optional List<string>	cbc_Conditions;
+	optional string	cbc_CountrySubentity;
+	optional string	cbc_CountrySubentityCode;
+	optional string	cbc_LocationTypeCode;
+	optional string	cbc_InformationURI;
+	optional string	cbc_Name;
+	optional List<Cac_Period>	cac_ValidityPeriod;
+	optional Cac_Address	cac_Address;
+	optional List<string>	cac_SubsidiaryLocationUdid; // optional Cac_Location
+	optional List<Cac_LocationCoordinate>	cac_LocationCoordinate;
+}
+
+struct Cac_LocationCoordinate
+{
+	optional string	cbc_CoordinateSystemCode;
+	optional string	cbc_LatitudeDegreesMeasure;
+	optional string	cbc_LatitudeMinutesMeasure;
+	optional string	cbc_LatitudeDirectionCode;
+	optional string	cbc_LongitudeDegreesMeasure;
+	optional string	cbc_LongitudeMinutesMeasure;
+	optional string	cbc_LongitudeDirectionCode;
+	optional string	cbc_AltitudeMeasure;
+}
+
+struct Cac_LotIdentification
+{
+	optional string	cbc_LotNumberID;
+	optional DateTime	cbc_ExpiryDate;
+	optional List<Cac_ItemProperty>	cac_AdditionalItemProperty;
+}
+
+struct Cac_MaritimeTransport
+{
+	optional string	cbc_VesselID;
+	optional string	cbc_VesselName;
+	optional string	cbc_RadioCallSignID;
+	optional List<string>	cbc_ShipsRequirements;
+	optional string	cbc_GrossTonnageMeasure;
+	optional string	cbc_NetTonnageMeasure;
+	optional Cac_DocumentReference	cac_RegistryCertificateDocumentReference;
+	optional string	cac_RegistryPortLocationUdid; // optional Cac_Location
+}
+
+struct Cac_MonetaryTotal
+{
+	optional string	cbc_LineExtensionAmount;
+	optional string	cbc_TaxExclusiveAmount;
+	optional string	cbc_TaxInclusiveAmount;
+	optional string	cbc_AllowanceTotalAmount;
+	optional string	cbc_ChargeTotalAmount;
+	optional string	cbc_PrepaidAmount;
+	optional string	cbc_PayableRoundingAmount;
+	string	cbc_PayableAmount;
+	optional string	cbc_PayableAlternativeAmount;
+}
+
+struct Cac_Order
+{
+	optional string	cbc_UBLVersionID;
+	optional string	cbc_CustomizationID;
+	optional string	cbc_ProfileID;
+	optional string	cbc_ProfileExecutionID;
+	string	cbc_ID;
+	optional string	cbc_SalesOrderID;
+	optional string	cbc_CopyIndicator;
+	optional string	cbc_UUID;
+	DateTime	cbc_IssueDate;
+	optional DateTime	cbc_IssueTime;
+	optional string	cbc_OrderTypeCode;
+	optional List<string>	cbc_Note;
+	optional string	cbc_RequestedInvoiceCurrencyCode;
+	optional string	cbc_DocumentCurrencyCode;
+	optional string	cbc_PricingCurrencyCode;
+	optional string	cbc_TaxCurrencyCode;
+	optional string	cbc_CustomerReference;
+	optional string	cbc_AccountingCostCode;
+	optional string	cbc_AccountingCost;
+	optional string	cbc_LineCountNumeric;
+	optional List<Cac_Period>	cac_ValidityPeriod;
+	optional Cac_DocumentReference	cac_QuotationDocumentReference;
+	optional List<Cac_DocumentReference>	cac_OrderDocumentReference;
+	optional Cac_DocumentReference	cac_OriginatorDocumentReference;
+	optional Cac_CatalogueReference	cac_CatalogueReference;
+	optional List<Cac_DocumentReference>	cac_AdditionalDocumentReference;
+	optional List<Cac_Contract>	cac_Contract;
+	optional List<Cac_ProjectReference>	cac_ProjectReference;
+	optional List<Cac_Signature>	cac_Signature;
+	string	cac_BuyerCustomerPartyUdid; // Cac_CustomerParty
+	string	cac_SellerSupplierPartyUdid; // Cac_SupplierParty
+	optional string	cac_OriginatorCustomerPartyUdid; // optional Cac_CustomerParty
+	optional string	cac_FreightForwarderPartyUdid; // optional Cac_Party
+	optional string	cac_AccountingCustomerPartyUdid; // optional Cac_CustomerParty
+	optional List<Cac_Delivery>	cac_Delivery;
+	optional List<Cac_DeliveryTerms>	cac_DeliveryTerms;
+	optional List<Cac_PaymentMeans>	cac_PaymentMeans;
+	optional List<Cac_PaymentTerms>	cac_PaymentTerms;
+	optional Cac_TransactionConditions	cac_TransactionConditions;
+	optional List<Cac_AllowanceCharge>	cac_AllowanceCharge;
+	optional Cac_ExchangeRate	cac_TaxExchangeRate;
+	optional Cac_ExchangeRate	cac_PricingExchangeRate;
+	optional Cac_ExchangeRate	cac_PaymentExchangeRate;
+	optional Cac_Country	cac_DestinationCountry;
+	optional List<Cac_TaxTotal>	cac_TaxTotal;
+	optional Cac_MonetaryTotal	cac_AnticipatedMonetaryTotal;
+	List<Cac_OrderLine>	cac_OrderLine;
+}
+
+struct Cac_OrderedShipment
+{
+	string	cac_ShipmentUdid; // Cac_Shipment
+	optional List<string>	cac_PackageUdid; // optional Cac_Package
+}
+
+struct Cac_OrderLine
+{
+	optional string	cbc_SubstitutionStatusCode;
+	optional List<string>	cbc_Note;
+	string	cac_LineItemUdid; // Cac_LineItem
+	optional List<string>	cac_SellerProposedSubstituteLineItemUdid; // optional Cac_LineItem
+	optional List<string>	cac_SellerSubstitutedLineItemUdid; // optional Cac_LineItem
+	optional List<string>	cac_BuyerProposedSubstituteLineItemUdid; // optional Cac_LineItem
+	optional Cac_LineReference	cac_CatalogueLineReference;
+	optional Cac_LineReference	cac_QuotationLineReference;
+	optional List<Cac_OrderLineReference>	cac_OrderLineReference;
+	optional List<Cac_DocumentReference>	cac_DocumentReference;
 }
 
 struct Cac_OrderLineReference
 {
-	string cbc_LineID;
+	string	cbc_LineID;
+	optional string	cbc_SalesOrderLineID;
+	optional string	cbc_UUID;
+	optional string	cbc_LineStatusCode;
+	optional Cac_OrderReference	cac_OrderReference;
+}
+
+struct Cac_OrderReference
+{
+	string	cbc_ID;
+	optional string	cbc_SalesOrderID;
+	optional string	cbc_CopyIndicator;
+	optional string	cbc_UUID;
+	optional DateTime	cbc_IssueDate;
+	optional DateTime	cbc_IssueTime;
+	optional string	cbc_CustomerReference;
+	optional string	cbc_OrderTypeCode;
+	optional Cac_DocumentReference	cac_DocumentReference;
+}
+
+struct Cac_Package
+{
+	optional string	cbc_ID;
+	optional string	cbc_Quantity;
+	optional string	cbc_ReturnableMaterialIndicator;
+	optional string	cbc_PackageLevelCode;
+	optional string	cbc_PackagingTypeCode;
+	optional List<string>	cbc_PackingMaterial;
+	optional string	cbc_TraceID;
+	optional List<string>	cac_ContainedPackageUdid; // optional Cac_Package
+	optional string	cac_ContainingTransportEquipmentUdid; // optional Cac_TransportEquipment
+	optional List<string>	cac_GoodsItemUdid; // optional Cac_GoodsItem
+	optional List<Cac_Dimension>	cac_MeasurementDimension;
+	optional List<Cac_DeliveryUnit>	cac_DeliveryUnit;
+	optional Cac_Delivery	cac_Delivery;
+	optional Cac_Pickup	cac_Pickup;
+	optional Cac_Despatch	cac_Despatch;
+}
+
+struct Cac_Party
+{
+	optional string	cbc_MarkCareIndicator;
+	optional string	cbc_MarkAttentionIndicator;
+	optional string	cbc_WebsiteURI;
+	optional string	cbc_LogoReferenceID;
+	optional string	cbc_EndpointID;
+	optional string	cbc_IndustryClassificationCode;
+	optional List<Cac_PartyIdentification>	cac_PartyIdentification;
+	optional List<Cac_PartyName>	cac_PartyName;
+	optional Cac_Language	cac_Language;
+	optional Cac_Address	cac_PostalAddress;
+	optional string	cac_PhysicalLocationUdid; // optional Cac_Location
+	optional List<Cac_PartyTaxScheme>	cac_PartyTaxScheme;
+	optional List<Cac_PartyLegalEntity>	cac_PartyLegalEntity;
+	optional Cac_Contact	cac_Contact;
+	optional List<Cac_Person>	cac_Person;
+	optional string	cac_AgentPartyUdid; // optional Cac_Party
+	optional List<string>	cac_ServiceProviderPartyUdid; // optional Cac_ServiceProviderParty
+	optional List<Cac_PowerOfAttorney>	cac_PowerOfAttorney;
+	optional Cac_FinancialAccount	cac_FinancialAccount;
 }
 
 struct Cac_PartyIdentification
 {
-	Cbc_SchemeCode cbc_ID;
+	string	cbc_ID;
+}
+
+struct Cac_PartyLegalEntity
+{
+	optional string	cbc_RegistrationName;
+	optional string	cbc_CompanyID;
+	optional DateTime	cbc_RegistrationDate;
+	optional DateTime	cbc_RegistrationExpirationDate;
+	optional string	cbc_CompanyLegalFormCode;
+	optional string	cbc_CompanyLegalForm;
+	optional string	cbc_SoleProprietorshipIndicator;
+	optional string	cbc_CompanyLiquidationStatusCode;
+	optional string	cbc_CorporateStockAmount;
+	optional string	cbc_FullyPaidSharesIndicator;
+	optional Cac_Address	cac_RegistrationAddress;
+	optional Cac_CorporateRegistrationScheme	cac_CorporateRegistrationScheme;
+	optional string	cac_HeadOfficePartyUdid; // optional Cac_Party
+	optional List<string>	cac_ShareholderPartyUdid; // optional Cac_ShareholderParty
 }
 
 struct Cac_PartyName
 {
-	string cbc_Name;	
+	string	cbc_Name;
 }
 
 struct Cac_PartyTaxScheme
 {
-	Cbc_SchemeCode cbc_CompanyID;
-	Cac_TaxScheme cac_TaxScheme;
+	optional string	cbc_RegistrationName;
+	optional string	cbc_CompanyID;
+	optional string	cbc_TaxLevelCode;
+	optional string	cbc_ExemptionReasonCode;
+	optional List<string>	cbc_ExemptionReason;
+	optional Cac_Address	cac_RegistrationAddress;
+	Cac_TaxScheme	cac_TaxScheme;
+}
+
+struct Cac_Payment
+{
+	optional string	cbc_ID;
+	optional string	cbc_PaidAmount;
+	optional DateTime	cbc_ReceivedDate;
+	optional DateTime	cbc_PaidDate;
+	optional DateTime	cbc_PaidTime;
+	optional string	cbc_InstructionID;
+}
+
+struct Cac_PaymentMandate
+{
+	optional string	cbc_ID;
+	optional string	cbc_MandateTypeCode;
+	optional string	cbc_MaximumPaymentInstructionsNumeric;
+	optional string	cbc_MaximumPaidAmount;
+	optional string	cbc_SignatureID;
+	optional string	cac_PayerPartyUdid; // optional Cac_Party
+	optional Cac_FinancialAccount	cac_PayerFinancialAccount;
+	optional Cac_Period	cac_ValidityPeriod;
+	optional Cac_Period	cac_PaymentReversalPeriod;
+	optional List<Cac_Clause>	cac_Clause;
 }
 
 struct Cac_PaymentMeans
 {
-	Cbc_ListCode cbc_PaymentMeansCode;
-	DateTime cbc_PaymentDueDate;
-	string cbc_PaymentChannel;
-	string cbc_PaymentID;
-	string cac_PayeeFinancialAccountUdid;	// Cac_PayeeFinancialAccount_SealedEnvelope
-}
-
-struct Cac_Person
-{
-	string cbc_FirstName;
-	string cbc_MiddleName;
-	string cbc_FamilyName;
-	string cbc_JobTitle;
-}
-
-struct Cac_Price
-{
-	Cbc_Amount cbc_PriceAmount;
-	Cbc_Quantity cbc_BaseQuantity;
-	Cac_AllowanceCharge cac_AllowanceCharge;
-}
-
-struct Cac_PayeeParty
-{
-	string cac_PartyUdid; // Cbc_Party_SealedEnvelope;
+	optional string	cbc_ID;
+	string	cbc_PaymentMeansCode;
+	optional DateTime	cbc_PaymentDueDate;
+	optional string	cbc_PaymentChannelCode;
+	optional string	cbc_InstructionID;
+	optional List<string>	cbc_InstructionNote;
+	optional List<string>	cbc_PaymentID;
+	optional Cac_CardAccount	cac_CardAccount;
+	optional Cac_FinancialAccount	cac_PayerFinancialAccount;
+	optional Cac_FinancialAccount	cac_PayeeFinancialAccount;
+	optional Cac_CreditAccount	cac_CreditAccount;
+	optional Cac_PaymentMandate	cac_PaymentMandate;
+	optional Cac_TradeFinancing	cac_TradeFinancing;
 }
 
 struct Cac_PaymentTerms
 {
-	Cbc_Note cbc_Note;	
+	optional string	cbc_ID;
+	optional List<string>	cbc_PaymentMeansID;
+	optional string	cbc_PrepaidPaymentReferenceID;
+	optional List<string>	cbc_Note;
+	optional string	cbc_ReferenceEventCode;
+	optional string	cbc_SettlementDiscountPercent;
+	optional string	cbc_PenaltySurchargePercent;
+	optional string	cbc_PaymentPercent;
+	optional string	cbc_Amount;
+	optional string	cbc_SettlementDiscountAmount;
+	optional string	cbc_PenaltyAmount;
+	optional string	cbc_PaymentTermsDetailsURI;
+	optional DateTime	cbc_PaymentDueDate;
+	optional DateTime	cbc_InstallmentDueDate;
+	optional string	cbc_InvoicingPartyReference;
+	optional Cac_Period	cac_SettlementPeriod;
+	optional Cac_Period	cac_PenaltyPeriod;
+	optional Cac_ExchangeRate	cac_ExchangeRate;
+	optional Cac_Period	cac_ValidityPeriod;
 }
 
-struct Cac_SellersItemIdentification
+struct Cac_Period
 {
-	string cbc_ID;	
+	optional DateTime	cbc_StartDate;
+	optional DateTime	cbc_StartTime;
+	optional DateTime	cbc_EndDate;
+	optional DateTime	cbc_EndTime;
+	optional string	cbc_DurationMeasure;
+	optional List<string>	cbc_DescriptionCode;
+	optional List<string>	cbc_Description;
+}
+
+struct Cac_Person
+{
+	optional string	cbc_ID;
+	optional string	cbc_FirstName;
+	optional string	cbc_FamilyName;
+	optional string	cbc_Title;
+	optional string	cbc_MiddleName;
+	optional string	cbc_OtherName;
+	optional string	cbc_NameSuffix;
+	optional string	cbc_JobTitle;
+	optional string	cbc_NationalityID;
+	optional string	cbc_GenderCode;
+	optional DateTime	cbc_BirthDate;
+	optional string	cbc_BirthplaceName;
+	optional string	cbc_OrganizationDepartment;
+	optional Cac_Contact	cac_Contact;
+	optional Cac_FinancialAccount	cac_FinancialAccount;
+	optional List<Cac_DocumentReference>	cac_IdentityDocumentReference;
+	optional Cac_Address	cac_ResidenceAddress;
+}
+
+struct Cac_PhysicalAttribute
+{
+	string	cbc_AttributeID;
+	optional string	cbc_PositionCode;
+	optional string	cbc_DescriptionCode;
+	optional List<string>	cbc_Description;
+}
+
+struct Cac_Pickup
+{
+	optional string	cbc_ID;
+	optional DateTime	cbc_ActualPickupDate;
+	optional DateTime	cbc_ActualPickupTime;
+	optional DateTime	cbc_EarliestPickupDate;
+	optional DateTime	cbc_EarliestPickupTime;
+	optional DateTime	cbc_LatestPickupDate;
+	optional DateTime	cbc_LatestPickupTime;
+	optional string	cac_PickupLocationUdid; // optional Cac_Location
+	optional string	cac_PickupPartyUdid; // optional Cac_Party
+}
+
+struct Cac_PowerOfAttorney
+{
+	optional string	cbc_ID;
+	optional DateTime	cbc_IssueDate;
+	optional DateTime	cbc_IssueTime;
+	optional List<string>	cbc_Description;
+	optional string	cac_NotaryPartyUdid; // optional Cac_Party
+	string	cac_AgentPartyUdid; // Cac_Party
+	optional List<string>	cac_WitnessPartyUdid; // optional Cac_Party
+	optional List<Cac_DocumentReference>	cac_MandateDocumentReference;
+}
+
+struct Cac_Price
+{
+	string	cbc_PriceAmount;
+	optional string	cbc_BaseQuantity;
+	optional List<string>	cbc_PriceChangeReason;
+	optional string	cbc_PriceTypeCode;
+	optional string	cbc_PriceType;
+	optional string	cbc_OrderableUnitFactorRate;
+	optional List<Cac_Period>	cac_ValidityPeriod;
+	optional string	cac_PriceListUdid; // optional Cac_PriceList
+	optional List<Cac_AllowanceCharge>	cac_AllowanceCharge;
+	optional Cac_ExchangeRate	cac_PricingExchangeRate;
+}
+
+struct Cac_PriceExtension
+{
+	string	cbc_Amount;
+	optional List<Cac_TaxTotal>	cac_TaxTotal;
+}
+
+struct Cac_PriceList
+{
+	optional string	cbc_ID;
+	optional string	cbc_StatusCode;
+	optional List<Cac_Period>	cac_ValidityPeriod;
+	optional string	cac_PreviousPriceListUdid; // optional Cac_PriceList
+}
+
+struct Cac_PricingReference
+{
+	optional Cac_ItemLocationQuantity	cac_OriginalItemLocationQuantity;
+	optional List<Cac_Price>	cac_AlternativeConditionPrice;
+}
+
+struct Cac_ProjectReference
+{
+	string	cbc_ID;
+	optional string	cbc_UUID;
+	optional DateTime	cbc_IssueDate;
+	optional List<Cac_WorkPhaseReference>	cac_WorkPhaseReference;
+}
+
+struct Cac_RailTransport
+{
+	string	cbc_TrainID;
+	optional string	cbc_RailCarID;
+}
+
+struct Cac_ReceiptLine
+{
+	string	cbc_ID;
+	optional string	cbc_UUID;
+	optional List<string>	cbc_Note;
+	optional string	cbc_ReceivedQuantity;
+	optional string	cbc_ShortQuantity;
+	optional string	cbc_ShortageActionCode;
+	optional string	cbc_RejectedQuantity;
+	optional string	cbc_RejectReasonCode;
+	optional List<string>	cbc_RejectReason;
+	optional string	cbc_RejectActionCode;
+	optional string	cbc_QuantityDiscrepancyCode;
+	optional string	cbc_OversupplyQuantity;
+	optional DateTime	cbc_ReceivedDate;
+	optional string	cbc_TimingComplaintCode;
+	optional string	cbc_TimingComplaint;
+	optional Cac_OrderLineReference	cac_OrderLineReference;
+	optional List<Cac_LineReference>	cac_DespatchLineReference;
+	optional List<Cac_DocumentReference>	cac_DocumentReference;
+	optional List<Cac_Item>	cac_Item;
+	optional List<string>	cac_ShipmentUdid; // optional Cac_Shipment
+}
+
+struct Cac_ResultOfVerification
+{
+	optional string	cbc_ValidatorID;
+	optional string	cbc_ValidationResultCode;
+	optional DateTime	cbc_ValidationDate;
+	optional DateTime	cbc_ValidationTime;
+	optional string	cbc_ValidateProcess;
+	optional string	cbc_ValidateTool;
+	optional string	cbc_ValidateToolVersion;
+	optional string	cac_SignatoryPartyUdid; // optional Cac_Party
+}
+
+struct Cac_RoadTransport
+{
+	string	cbc_LicensePlateID;
+}
+
+struct Cac_SecondaryHazard
+{
+	optional string	cbc_ID;
+	optional string	cbc_PlacardNotation;
+	optional string	cbc_PlacardEndorsement;
+	optional string	cbc_EmergencyProceduresCode;
+	optional List<string>	cbc_Extension;
+}
+
+struct Cac_ServiceFrequency
+{
+	string	cbc_WeekDayCode;
+}
+
+struct Cac_ServiceProviderParty
+{
+	optional string	cbc_ID;
+	optional string	cbc_ServiceTypeCode;
+	optional List<string>	cbc_ServiceType;
+	string	cac_PartyUdid; // Cac_Party
+	optional Cac_Contact	cac_SellerContact;
+}
+
+struct Cac_ShareholderParty
+{
+	optional string	cbc_PartecipationPercent;
+	optional string	cac_PartyUdid; // optional Cac_Party
+}
+
+struct Cac_Shipment
+{
+	string	cbc_ID;
+	optional string	cbc_ShippingPriorityLevelCode;
+	optional string	cbc_HandlingCode;
+	optional List<string>	cbc_HandlingInstructions;
+	optional List<string>	cbc_Information;
+	optional string	cbc_GrossWeightMeasure;
+	optional string	cbc_NetWeightMeasure;
+	optional string	cbc_NetNetWeightMeasure;
+	optional string	cbc_GrossVolumeMeasure;
+	optional string	cbc_NetVolumeMeasure;
+	optional string	cbc_TotalGoodsItemQuantity;
+	optional string	cbc_TotalTransportHandlingUnitQuantity;
+	optional string	cbc_InsuranceValueAmount;
+	optional string	cbc_DeclaredCustomsValueAmount;
+	optional string	cbc_DeclaredForCarriageValueAmount;
+	optional string	cbc_DeclaredStatisticsValueAmount;
+	optional string	cbc_FreeOnBoardValueAmount;
+	optional List<string>	cbc_SpecialInstructions;
+	optional List<string>	cbc_DeliveryInstructions;
+	optional string	cbc_SplitConsignmentIndicator;
+	optional string	cbc_ConsignmentQuantity;
+	optional List<string>	cac_ConsignmentUdid; // optional Cac_Consignment
+	optional List<string>	cac_GoodsItemUdid; // optional Cac_GoodsItem
+	optional List<Cac_ShipmentStage>	cac_ShipmentStage;
+	optional Cac_Delivery	cac_Delivery;
+	optional List<Cac_TransportHandlingUnit>	cac_TransportHandlingUnit;
+	optional Cac_Address	cac_ReturnAddress;
+	optional Cac_Address	cac_OriginAddress;
+	optional string	cac_FirstArrivalPortLocationUdid; // optional Cac_Location
+	optional string	cac_LastExitPortLocationUdid; // optional Cac_Location
+	optional Cac_Country	cac_ExportCountry;
+	optional List<Cac_AllowanceCharge>	cac_FreightAllowanceCharge;
+}
+
+struct Cac_ShipmentStage
+{
+	optional string	cbc_ID;
+	optional string	cbc_TransportModeCode;
+	optional string	cbc_TransportMeansTypeCode;
+	optional string	cbc_TransitDirectionCode;
+	optional string	cbc_PreCarriageIndicator;
+	optional string	cbc_OnCarriageIndicator;
+	optional DateTime	cbc_EstimatedDeliveryDate;
+	optional DateTime	cbc_EstimatedDeliveryTime;
+	optional DateTime	cbc_RequiredDeliveryDate;
+	optional DateTime	cbc_RequiredDeliveryTime;
+	optional string	cbc_LoadingSequenceID;
+	optional string	cbc_SuccessiveSequenceID;
+	optional List<string>	cbc_Instructions;
+	optional List<string>	cbc_DemurrageInstructions;
+	optional string	cbc_CrewQuantity;
+	optional string	cbc_PassengerQuantity;
+	optional Cac_Period	cac_TransitPeriod;
+	optional List<string>	cac_CarrierPartyUdid; // optional Cac_Party
+	optional Cac_TransportMeans	cac_TransportMeans;
+	optional string	cac_LoadingPortLocationUdid; // optional Cac_Location
+	optional string	cac_UnloadingPortLocationUdid; // optional Cac_Location
+	optional string	cac_TransshipPortLocationUdid; // optional Cac_Location
+	optional string	cac_LoadingTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_ExaminationTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_AvailabilityTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_ExportationTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_DischargeTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_WarehousingTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_TakeoverTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_OptionalTakeoverTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_DropoffTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_ActualPickupTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_DeliveryTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_ReceiptTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_StorageTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_AcceptanceTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_TerminalOperatorPartyUdid; // optional Cac_Party
+	optional string	cac_CustomsAgentPartyUdid; // optional Cac_Party
+	optional Cac_Period	cac_EstimatedTransitPeriod;
+	optional List<Cac_AllowanceCharge>	cac_FreightAllowanceCharge;
+	optional string	cac_FreightChargeLocationUdid; // optional Cac_Location
+	optional List<string>	cac_DetentionTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_RequestedDepartureTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_RequestedArrivalTransportEventUdid; // optional Cac_TransportEvent
+	optional List<string>	cac_RequestedWaypointTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_PlannedDepartureTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_PlannedArrivalTransportEventUdid; // optional Cac_TransportEvent
+	optional List<string>	cac_PlannedWaypointTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_ActualDepartureTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_ActualWaypointTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_ActualArrivalTransportEventUdid; // optional Cac_TransportEvent
+	optional List<string>	cac_TransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_EstimatedDepartureTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_EstimatedArrivalTransportEventUdid; // optional Cac_TransportEvent
+	optional List<Cac_Person>	cac_PassengerPerson;
+	optional List<Cac_Person>	cac_DriverPerson;
+	optional Cac_Person	cac_ReportingPerson;
+	optional List<Cac_Person>	cac_CrewMemberPerson;
+	optional Cac_Person	cac_SecurityOfficerPerson;
+	optional Cac_Person	cac_MasterPerson;
+	optional Cac_Person	cac_ShipsSurgeonPerson;
+}
+
+struct Cac_Signature
+{
+	string	cbc_ID;
+	optional List<string>	cbc_Note;
+	optional DateTime	cbc_ValidationDate;
+	optional DateTime	cbc_ValidationTime;
+	optional string	cbc_ValidatorID;
+	optional string	cbc_CanonicalizationMethod;
+	optional string	cbc_SignatureMethod;
+	optional string	cac_SignatoryPartyUdid; // optional Cac_Party
+	optional Cac_Attachment	cac_DigitalSignatureAttachment;
+	optional Cac_DocumentReference	cac_OriginalDocumentReference;
+}
+
+struct Cac_Status
+{
+	optional string	cbc_ConditionCode;
+	optional DateTime	cbc_ReferenceDate;
+	optional DateTime	cbc_ReferenceTime;
+	optional List<string>	cbc_Description;
+	optional string	cbc_StatusReasonCode;
+	optional List<string>	cbc_StatusReason;
+	optional string	cbc_SequenceID;
+	optional List<string>	cbc_Text;
+	optional string	cbc_IndicationIndicator;
+	optional string	cbc_Percent;
+	optional string	cbc_ReliabilityPercent;
+	optional List<Cac_Condition>	cac_Condition;
+}
+
+struct Cac_Stowage
+{
+	optional string	cbc_LocationID;
+	optional List<string>	cbc_Location;
+	optional List<Cac_Dimension>	cac_MeasurementDimension;
+}
+
+struct Cac_SupplierParty
+{
+	optional string	cbc_CustomerAssignedAccountID;
+	optional List<string>	cbc_AdditionalAccountID;
+	optional string	cbc_DataSendingCapability;
+	optional string	cac_PartyUdid; // optional Cac_Party
+	optional Cac_Contact	cac_DespatchContact;
+	optional Cac_Contact	cac_AccountingContact;
+	optional Cac_Contact	cac_SellerContact;
 }
 
 struct Cac_TaxCategory
 {
-	Cbc_SchemeCode cbc_ID;
-	double cbc_Percent;
-	Cac_TaxScheme cac_TaxScheme;
+	optional string	cbc_ID;
+	optional string	cbc_Name;
+	optional string	cbc_Percent;
+	optional string	cbc_BaseUnitMeasure;
+	optional string	cbc_PerUnitAmount;
+	optional string	cbc_TaxExemptionReasonCode;
+	optional List<string>	cbc_TaxExemptionReason;
+	optional string	cbc_TierRange;
+	optional string	cbc_TierRatePercent;
+	Cac_TaxScheme	cac_TaxScheme;
 }
 
 struct Cac_TaxScheme
 {
-	Cbc_SchemeCode cbc_ID;	
+	optional string	cbc_ID;
+	optional string	cbc_Name;
+	optional string	cbc_TaxTypeCode;
+	optional string	cbc_CurrencyCode;
+	optional List<Cac_Address>	cac_JurisdictionRegionAddress;
 }
 
 struct Cac_TaxSubtotal
 {
-	Cbc_Amount cbc_TaxableAmount;	
-	Cbc_Amount cbc_TaxAmount;
-	Cac_TaxCategory cac_TaxCategory;
+	optional string	cbc_TaxableAmount;
+	string	cbc_TaxAmount;
+	optional string	cbc_CalculationSequenceNumeric;
+	optional string	cbc_TransactionCurrencyTaxAmount;
+	optional string	cbc_Percent;
+	optional string	cbc_BaseUnitMeasure;
+	optional string	cbc_PerUnitAmount;
+	optional string	cbc_TierRange;
+	optional string	cbc_TierRatePercent;
+	Cac_TaxCategory	cac_TaxCategory;
 }
 
 struct Cac_TaxTotal
 {
-	Cbc_Amount cbc_TaxAmount;
-	List<Cac_TaxSubtotal> cac_TaxSubtotals;
+	string	cbc_TaxAmount;
+	optional string	cbc_RoundingAmount;
+	optional string	cbc_TaxEvidenceIndicator;
+	optional string	cbc_TaxIncludedIndicator;
+	optional List<Cac_TaxSubtotal>	cac_TaxSubtotal;
 }
+
+struct Cac_Temperature
+{
+	string	cbc_AttributeID;
+	string	cbc_Measure;
+	optional List<string>	cbc_Description;
+}
+
+struct Cac_TradeFinancing
+{
+	optional string	cbc_ID;
+	optional string	cbc_FinancingInstrumentCode;
+	optional Cac_DocumentReference	cac_ContractDocumentReference;
+	optional List<Cac_DocumentReference>	cac_DocumentReference;
+	string	cac_FinancingPartyUdid; // Cac_Party
+	optional Cac_FinancialAccount	cac_FinancingFinancialAccount;
+	optional List<Cac_Clause>	cac_Clause;
+}
+
+struct Cac_TradingTerms
+{
+	optional List<string>	cbc_Information;
+	optional string	cbc_Reference;
+	optional Cac_Address	cac_ApplicableAddress;
+}
+
+struct Cac_TransactionConditions
+{
+	optional string	cbc_ID;
+	optional string	cbc_ActionCode;
+	optional List<string>	cbc_Description;
+	optional List<Cac_DocumentReference>	cac_DocumentReference;
+}
+
+struct Cac_TransportationService
+{
+	string	cbc_TransportServiceCode;
+	optional string	cbc_TariffClassCode;
+	optional string	cbc_Priority;
+	optional string	cbc_FreightRateClassCode;
+	optional List<string>	cbc_TransportationServiceDescription;
+	optional string	cbc_TransportationServiceDetailsURI;
+	optional DateTime	cbc_NominationDate;
+	optional DateTime	cbc_NominationTime;
+	optional string	cbc_Name;
+	optional string	cbc_SequenceNumeric;
+	optional List<string>	cac_TransportEquipmentUdid; // optional Cac_TransportEquipment
+	optional List<string>	cac_SupportedTransportEquipmentUdid; // optional Cac_TransportEquipment
+	optional List<string>	cac_UnsupportedTransportEquipmentUdid; // optional Cac_TransportEquipment
+	optional List<Cac_CommodityClassification>	cac_CommodityClassification;
+	optional List<Cac_CommodityClassification>	cac_SupportedCommodityClassification;
+	optional List<Cac_CommodityClassification>	cac_UnsupportedCommodityClassification;
+	optional Cac_Dimension	cac_TotalCapacityDimension;
+	optional List<Cac_ShipmentStage>	cac_ShipmentStage;
+	optional List<string>	cac_TransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_ResponsibleTransportServiceProviderPartyUdid; // optional Cac_Party
+	optional List<Cac_EnvironmentalEmission>	cac_EnvironmentalEmission;
+	optional Cac_Period	cac_EstimatedDurationPeriod;
+	optional List<Cac_ServiceFrequency>	cac_ScheduledServiceFrequency;
+}
+
+struct Cac_TransportationStatus
+{
+	optional string	cbc_UBLVersionID;
+	optional string	cbc_CustomizationID;
+	optional string	cbc_ProfileID;
+	optional string	cbc_ProfileExecutionID;
+	string	cbc_ID;
+	optional string	cbc_CarrierAssignedID;
+	optional string	cbc_UUID;
+	optional DateTime	cbc_IssueDate;
+	optional DateTime	cbc_IssueTime;
+	optional string	cbc_Name;
+	optional List<string>	cbc_Description;
+	optional List<string>	cbc_Note;
+	optional string	cbc_ShippingOrderID;
+	optional string	cbc_OtherInstruction;
+	optional string	cbc_TransportationStatusTypeCode;
+	optional string	cbc_TransportExecutionStatusCode;
+	optional List<string>	cac_ConsignmentUdid; // optional Cac_Consignment
+	optional List<string>	cac_TransportEventUdid; // optional Cac_TransportEvent
+	optional List<Cac_DocumentReference>	cac_DocumentReference;
+	optional List<Cac_Signature>	cac_Signature;
+	optional string	cac_SenderPartyUdid; // optional Cac_Party
+	optional string	cac_ReceiverPartyUdid; // optional Cac_Party
+	optional Cac_DocumentReference	cac_TransportationStatusRequestDocumentReference;
+	optional Cac_DocumentReference	cac_TransportExecutionPlanDocumentReference;
+	optional string	cac_UpdatedPickupTransportEventUdid; // optional Cac_TransportEvent
+	optional string	cac_UpdatedDeliveryTransportEventUdid; // optional Cac_TransportEvent
+	optional List<string>	cac_StatusLocationUdid; // optional Cac_Location
+	optional List<Cac_Period>	cac_StatusPeriod;
+}
+
+struct Cac_TransportEquipment
+{
+	optional string	cbc_ID;
+	optional List<string>	cbc_ReferencedConsignmentID;
+	optional string	cbc_TransportEquipmentTypeCode;
+	optional string	cbc_ProviderTypeCode;
+	optional string	cbc_OwnerTypeCode;
+	optional string	cbc_SizeTypeCode;
+	optional string	cbc_DispositionCode;
+	optional string	cbc_FullnessIndicationCode;
+	optional string	cbc_RefrigerationOnIndicator;
+	optional List<string>	cbc_Information;
+	optional string	cbc_ReturnabilityIndicator;
+	optional string	cbc_LegalStatusIndicator;
+	optional string	cbc_AirFlowPercent;
+	optional string	cbc_HumidityPercent;
+	optional string	cbc_AnimalFoodApprovedIndicator;
+	optional string	cbc_HumanFoodApprovedIndicator;
+	optional string	cbc_DangerousGoodsApprovedIndicator;
+	optional string	cbc_RefrigeratedIndicator;
+	optional string	cbc_Characteristics;
+	optional List<string>	cbc_DamageRemarks;
+	optional List<string>	cbc_Description;
+	optional List<string>	cbc_SpecialTransportRequirements;
+	optional string	cbc_GrossWeightMeasure;
+	optional string	cbc_GrossVolumeMeasure;
+	optional string	cbc_TareWeightMeasure;
+	optional string	cbc_TrackingDeviceCode;
+	optional string	cbc_PowerIndicator;
+	optional string	cbc_TraceID;
+	optional List<Cac_Dimension>	cac_MeasurementDimension;
+	optional List<Cac_TransportEquipmentSeal>	cac_TransportEquipmentSeal;
+	optional Cac_Temperature	cac_MinimumTemperature;
+	optional Cac_Temperature	cac_MaximumTemperature;
+	optional string	cac_ProviderPartyUdid; // optional Cac_Party
+	optional string	cac_LoadingProofPartyUdid; // optional Cac_Party
+	optional string	cac_SupplierPartyUdid; // optional Cac_SupplierParty
+	optional string	cac_OwnerPartyUdid; // optional Cac_Party
+	optional string	cac_OperatingPartyUdid; // optional Cac_Party
+	optional string	cac_LoadingLocationUdid; // optional Cac_Location
+	optional string	cac_UnloadingLocationUdid; // optional Cac_Location
+	optional string	cac_StorageLocationUdid; // optional Cac_Location
+	optional List<string>	cac_PositioningTransportEventUdid; // optional Cac_TransportEvent
+	optional List<string>	cac_QuarantineTransportEventUdid; // optional Cac_TransportEvent
+	optional List<string>	cac_DeliveryTransportEventUdid; // optional Cac_TransportEvent
+	optional List<string>	cac_PickupTransportEventUdid; // optional Cac_TransportEvent
+	optional List<string>	cac_HandlingTransportEventUdid; // optional Cac_TransportEvent
+	optional List<string>	cac_LoadingTransportEventUdid; // optional Cac_TransportEvent
+	optional List<string>	cac_TransportEventUdid; // optional Cac_TransportEvent
+	optional Cac_TransportMeans	cac_ApplicableTransportMeans;
+	optional List<Cac_TradingTerms>	cac_HaulageTradingTerms;
+	optional List<Cac_HazardousGoodsTransit>	cac_HazardousGoodsTransit;
+	optional List<Cac_TransportHandlingUnit>	cac_PackagedTransportHandlingUnit;
+	optional List<Cac_AllowanceCharge>	cac_ServiceAllowanceCharge;
+	optional List<Cac_AllowanceCharge>	cac_FreightAllowanceCharge;
+	optional List<string>	cac_AttachedTransportEquipmentUdid; // optional Cac_TransportEquipment
+	optional Cac_Delivery	cac_Delivery;
+	optional Cac_Pickup	cac_Pickup;
+	optional Cac_Despatch	cac_Despatch;
+	optional List<Cac_DocumentReference>	cac_ShipmentDocumentReference;
+	optional List<string>	cac_ContainedInTransportEquipmentUdid; // optional Cac_TransportEquipment
+	optional List<string>	cac_PackageUdid; // optional Cac_Package
+	optional List<string>	cac_GoodsItemUdid; // optional Cac_GoodsItem
+}
+
+struct Cac_TransportEquipmentSeal
+{
+	string	cbc_ID;
+	optional string	cbc_SealIssuerTypeCode;
+	optional string	cbc_Condition;
+	optional string	cbc_SealStatusCode;
+	optional string	cbc_SealingPartyType;
+}
+
+struct Cac_TransportEvent
+{
+	optional string	cbc_IdentificationID;
+	optional DateTime	cbc_OccurrenceDate;
+	optional DateTime	cbc_OccurrenceTime;
+	optional string	cbc_TransportEventTypeCode;
+	optional List<string>	cbc_Description;
+	optional string	cbc_CompletionIndicator;
+	optional string	cac_ReportedShipmentUdid; // optional Cac_Shipment
+	optional List<Cac_Status>	cac_CurrentStatus;
+	optional List<Cac_Contact>	cac_Contact;
+	optional string	cac_LocationUdid; // optional Cac_Location
+	optional Cac_Signature	cac_Signature;
+	optional List<Cac_Period>	cac_Period;
+}
+
+struct Cac_TransportHandlingUnit
+{
+	optional string	cbc_ID;
+	optional string	cbc_TransportHandlingUnitTypeCode;
+	optional string	cbc_HandlingCode;
+	optional List<string>	cbc_HandlingInstructions;
+	optional string	cbc_HazardousRiskIndicator;
+	optional string	cbc_TotalGoodsItemQuantity;
+	optional string	cbc_TotalPackageQuantity;
+	optional List<string>	cbc_DamageRemarks;
+	optional List<string>	cbc_ShippingMarks;
+	optional string	cbc_TraceID;
+	optional List<Cac_DespatchLine>	cac_HandlingUnitDespatchLine;
+	optional List<string>	cac_ActualPackageUdid; // optional Cac_Package
+	optional List<Cac_ReceiptLine>	cac_ReceivedHandlingUnitReceiptLine;
+	optional List<string>	cac_TransportEquipmentUdid; // optional Cac_TransportEquipment
+	optional List<Cac_TransportMeans>	cac_TransportMeans;
+	optional List<Cac_HazardousGoodsTransit>	cac_HazardousGoodsTransit;
+	optional List<Cac_Dimension>	cac_MeasurementDimension;
+	optional Cac_Temperature	cac_MinimumTemperature;
+	optional Cac_Temperature	cac_MaximumTemperature;
+	optional List<string>	cac_GoodsItemUdid; // optional Cac_GoodsItem
+	optional Cac_Dimension	cac_FloorSpaceMeasurementDimension;
+	optional Cac_Dimension	cac_PalletSpaceMeasurementDimension;
+	optional List<Cac_DocumentReference>	cac_ShipmentDocumentReference;
+	optional List<Cac_Status>	cac_Status;
+	optional List<Cac_CustomsDeclaration>	cac_CustomsDeclaration;
+	optional List<string>	cac_ReferencedShipmentUdid; // optional Cac_Shipment
+	optional List<string>	cac_PackageUdid; // optional Cac_Package
+}
+
+struct Cac_TransportMeans
+{
+	optional string	cbc_JourneyID;
+	optional string	cbc_RegistrationNationalityID;
+	optional List<string>	cbc_RegistrationNationality;
+	optional string	cbc_DirectionCode;
+	optional string	cbc_TransportMeansTypeCode;
+	optional string	cbc_TradeServiceCode;
+	optional Cac_Stowage	cac_Stowage;
+	optional Cac_AirTransport	cac_AirTransport;
+	optional Cac_RoadTransport	cac_RoadTransport;
+	optional Cac_RailTransport	cac_RailTransport;
+	optional Cac_MaritimeTransport	cac_MaritimeTransport;
+	optional string	cac_OwnerPartyUdid; // optional Cac_Party
+	optional List<Cac_Dimension>	cac_MeasurementDimension;
+}
+
+struct Cac_Waybill
+{
+	optional string	cbc_UBLVersionID;
+	optional string	cbc_CustomizationID;
+	optional string	cbc_ProfileID;
+	optional string	cbc_ProfileExecutionID;
+	string	cbc_ID;
+	optional string	cbc_CarrierAssignedID;
+	optional string	cbc_UUID;
+	optional DateTime	cbc_IssueDate;
+	optional DateTime	cbc_IssueTime;
+	optional string	cbc_Name;
+	optional List<string>	cbc_Description;
+	optional List<string>	cbc_Note;
+	optional string	cbc_ShippingOrderID;
+	optional string	cbc_AdValoremIndicator;
+	optional string	cbc_DeclaredCarriageValueAmount;
+	optional List<string>	cbc_OtherInstruction;
+	optional string	cac_ConsignorPartyUdid; // optional Cac_Party
+	optional string	cac_CarrierPartyUdid; // optional Cac_Party
+	optional string	cac_FreightForwarderPartyUdid; // optional Cac_Party
+	string	cac_ShipmentUdid; // Cac_Shipment
+	optional List<Cac_DocumentReference>	cac_DocumentReference;
+	optional List<Cac_ExchangeRate>	cac_ExchangeRate;
+	optional List<Cac_DocumentDistribution>	cac_DocumentDistribution;
+	optional List<Cac_Signature>	cac_Signature;
+}
+
+struct Cac_WorkPhaseReference
+{
+	optional string	cbc_ID;
+	optional string	cbc_WorkPhaseCode;
+	optional List<string>	cbc_WorkPhase;
+	optional string	cbc_ProgressPercent;
+	optional DateTime	cbc_StartDate;
+	optional DateTime	cbc_EndDate;
+	optional List<Cac_DocumentReference>	cac_WorkOrderDocumentReference;
+}
+
