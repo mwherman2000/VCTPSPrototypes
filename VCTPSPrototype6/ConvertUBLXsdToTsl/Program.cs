@@ -25,7 +25,8 @@ namespace OberonExample1
             string namedInvoice = "Invoice";
             string namedInvoiceType = "InvoiceType";
 
-            string[] namedtypes = { "Order", "Waybill", "TransportationStatus", "Invoice" };
+            string[] namedtypes = new string[] { "Order", "Waybill", "TransportationStatus", "Invoice" };
+            namedtypes = new string[] { "Invoice" };
             string[] extranamedtypes = { "Item", "Party", "Location" };
 
             string[] xsdUrls = new string[] { 
@@ -244,7 +245,7 @@ namespace OberonExample1
             Assembly assembly = Assembly.GetExecutingAssembly();
             var streams = assembly.GetManifestResourceNames();
 
-            foreach (string typename in namedtypes)
+            foreach (string typename in namedtypes.Concat<string>(extranamedtypes))
             {
                 StreamWriter file2 = new StreamWriter("c:\\temp\\" + typename + ".ts");
 

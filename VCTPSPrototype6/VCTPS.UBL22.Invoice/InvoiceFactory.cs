@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VCTPS.Common;
 using Google.Protobuf;
+using VCTPS.Common;
 using VCTPS.Protocol;
 
-namespace VCTPS.UBL21Credentials
+namespace VCTPS.UBL22.Invoice
 {
-    public static class UBL21CredentialFactory
+    public static class InvoiceFactory
     {
         public static string UBLVERSIONID = "2.2";
         public static string UBLItemType = "UBL22Item";
         public static string UBLPartyType = "UBL22Party";
-        public static string UBLInvoiceType = "UBL22Invoice2";
+        public static string UBLInvoiceType = "UBL22Invoice";
 
         public static Cac_Item NewItemClaims(
                 string cbc_Name,
@@ -121,9 +121,9 @@ namespace VCTPS.UBL21Credentials
             Cac_DocumentReference cac_ContractDocumentReference,
             List<Cac_DocumentReference> cac_AdditionalDocumentReferences,
 
-            Cac_AccountingSupplierParty cac_AccountingSupplierParty,
-            Cac_AccountingCustomerParty cac_AccountingCustomerParty,
-            Cac_PayeeParty cac_PayeeParty,
+            Cac_SupplierParty cac_AccountingSupplierParty,
+            Cac_CustomerParty cac_AccountingCustomerParty,
+            Cac_Party cac_PayeeParty,
 
             Cac_Delivery cac_Delivery,
 
@@ -131,7 +131,7 @@ namespace VCTPS.UBL21Credentials
             Cac_PaymentTerms cac_PaymentTerms,
             List<Cac_AllowanceCharge> cac_AllowanceCharges,
             Cac_TaxTotal cac_TaxTotal,
-            Cac_LegalMonetaryTotal cac_LegalMonetaryTotal,
+            Cac_MonetaryTotal cac_LegalMonetaryTotal,
             List<Cac_InvoiceLine> cac_InvoiceLine
         )
         {
@@ -170,7 +170,7 @@ namespace VCTPS.UBL21Credentials
             return claims;
         }
 
-        public static UBL22_Invoice_SealedEnvelope NewInvoiceCredential(string udid, VCTPS_VCA_SealedEnvelope vca, Calc_Invoice claims, ByteString proofSk, string nonce64)
+        public static UBL22_Invoice_SealedEnvelope NewInvoiceCredential(string udid, VCTPS_VCA_SealedEnvelope vca, Cac_Invoice claims, ByteString proofSk, string nonce64)
         {
             UBL22_Invoice_EnvelopeContent content = new UBL22_Invoice_EnvelopeContent(udid, BTTGenericCredential.DefaultContext, udid, claims, null);
             List<string> types = new List<string>(BTTGenericCredential.RootType);
