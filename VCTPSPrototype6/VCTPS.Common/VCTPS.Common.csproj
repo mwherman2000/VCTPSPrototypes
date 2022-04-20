@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.20.0" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.11318" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.11411" />
   </ItemGroup>
 
   <ItemGroup>

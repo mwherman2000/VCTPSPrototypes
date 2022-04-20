@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCTPS.UBL22.Common", "VCTPS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCTPS.UBL22.Invoice", "VCTPS.UBL22.Invoice\VCTPS.UBL22.Invoice.csproj", "{3D336D7D-465C-4ED8-AFA0-25D319C89EF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCTPS.UBL22.Credentials", "VCTPS.UBL22.Credentials\VCTPS.UBL22.Credentials.csproj", "{AEBE47D6-1A6C-433D-945D-B9D76C0E7424}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{3D336D7D-465C-4ED8-AFA0-25D319C89EF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D336D7D-465C-4ED8-AFA0-25D319C89EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D336D7D-465C-4ED8-AFA0-25D319C89EF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEBE47D6-1A6C-433D-945D-B9D76C0E7424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEBE47D6-1A6C-433D-945D-B9D76C0E7424}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEBE47D6-1A6C-433D-945D-B9D76C0E7424}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEBE47D6-1A6C-433D-945D-B9D76C0E7424}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
