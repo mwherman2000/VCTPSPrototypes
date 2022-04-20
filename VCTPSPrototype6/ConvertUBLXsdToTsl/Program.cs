@@ -27,7 +27,8 @@ namespace OberonExample1
 
             string[] namedtypes = new string[] { "Order", "Waybill", "TransportationStatus", "Invoice" };
             namedtypes = new string[] { "Invoice" };
-            string[] extranamedtypes = { "Item", "Party", "Location" };
+            string[] extranamedtypes = new string[] { "Item", "Party", "Location" };
+            extranamedtypes = new string[] { };
 
             string[] xsdUrls = new string[] { 
                 "http://docs.oasis-open.org/ubl/os-UBL-2.1/xsdrt/common/UBL-CommonAggregateComponents-2.1.xsd",
@@ -80,6 +81,21 @@ namespace OberonExample1
                                         attrtype2 = "string";
                                     else
                                         attrtype2 = "Cac_" + nametypes1[attref2].Replace("Type", "");
+                                    if (attrtype2.EndsWith("Party") || attrtype2.EndsWith("Location")
+                                        || attrtype2.EndsWith("PriceList") || attrtype2.EndsWith("CreditNoteLine")
+                                        || attrtype2.EndsWith("DebitNoteLine") || attrtype2.EndsWith("InvoiceLine")
+                                        || attrtype2.EndsWith("LineItem") || attrtype2.EndsWith("RequestForTenderLine")
+                                        || attrtype2.EndsWith("AwardingCriterion") || attrtype2.EndsWith("AwardingCriterionResponse")
+                                        || attrtype2.EndsWith("ClassificationCategory") || attrtype2.EndsWith("Consignment")
+                                        || attrtype2.EndsWith("GoodsItem") || attrtype2.EndsWith("Package")
+                                        || attrtype2.EndsWith("TenderLine") || attrtype2.EndsWith("TransportEquipment")
+                                        || attrtype2.EndsWith("Shipment") || attrtype2.EndsWith("TransportEvent")
+                                        || attrtype2.EndsWith("ProcurementProjectLot")
+                                    )
+                                    {
+                                        attrtype2 = "string";
+                                        attrref += "Udid";
+                                    }
                                     propertytype = attrtype2;
                                     if (typepropertytypes1.ContainsKey(structname))
                                     {
