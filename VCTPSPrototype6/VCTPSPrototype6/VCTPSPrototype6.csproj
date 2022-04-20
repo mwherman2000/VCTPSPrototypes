@@ -29,8 +29,10 @@
   <ItemGroup>
     <ProjectReference Include="..\VCTPS.Common\VCTPS.Common.csproj" />
     <ProjectReference Include="..\VCTPS.CredentialWallet\VCTPS.CredentialWallet.csproj" />
-    <ProjectReference Include="..\VCTPS.UBL21Credentials\VCTPS.UBL21Credentials.csproj" />
     <ProjectReference Include="..\VCTPS.Protocol\VCTPS.Protocol.csproj" />
+    <ProjectReference Include="..\VCTPS.UBL22.Common\VCTPS.UBL22.Common.csproj" />
+    <ProjectReference Include="..\VCTPS.UBL22.Credentials\VCTPS.UBL22.Credentials.csproj" />
+    <ProjectReference Include="..\VCTPS.UBL22.Invoice\VCTPS.UBL22.Invoice.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -27,7 +27,8 @@ namespace OberonExample1
 
             string[] namedtypes = new string[] { "Order", "Waybill", "TransportationStatus", "Invoice" };
             namedtypes = new string[] { "Invoice" };
-            string[] extranamedtypes = { "Item", "Party", "Location" };
+            string[] extranamedtypes = new string[] { "Item", "Party", "Location" };
+            extranamedtypes = new string[] { };
 
             string[] xsdUrls = new string[] { 
                 "http://docs.oasis-open.org/ubl/os-UBL-2.1/xsdrt/common/UBL-CommonAggregateComponents-2.1.xsd",
