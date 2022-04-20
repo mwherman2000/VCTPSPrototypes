@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.20.0" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.11411" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.11318" />
   </ItemGroup>
 
   <ItemGroup>
