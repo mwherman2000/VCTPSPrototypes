@@ -76,8 +76,8 @@ public class Program
         Console.WriteLine("sealedEnvelopeJson:\r\n" + sealedEnvelopeJson);
 
         Trinity.TrinityConfig.HttpPort = 8081;
-        DIDCOMMAgentImplementation vctpAgent = new DIDCOMMAgentImplementation();
-        vctpAgent.Start();
+        DIDCOMMAgentImplementation didAgent = new DIDCOMMAgentImplementation();
+        didAgent.Start();
         Console.WriteLine("DIDCOMM Agent started...");
 
         var notify = VCTPSMessageFactory.NewNotifyMsg(KeyVault.FindKey("Charlie"), new string[] { KeyVault.FindKey("Delta"), KeyVault.FindKey("Echo") }, sealedEnvelopeJson);
@@ -107,7 +107,7 @@ public class Program
         Console.WriteLine("Press Enter to stop DIDCOMM Agent...");
         Console.ReadLine();
 
-        vctpAgent.Stop();
+        didAgent.Stop();
     }
 
     private static void ProcessEncryptedMessage(EncryptedMessage? emessage)
@@ -126,10 +126,10 @@ public class Program
         basic.MergeFrom(core.Body);
         Console.WriteLine("BasicMessage: " + core.Type + " " + basic.Text);
 
-        ProcessDIDCOMMMessage(skid, kid, core.Type, basic.Text);
+        ProcessVCTPSMessage(skid, kid, core.Type, basic.Text);
     }
 
-    private static void ProcessDIDCOMMMessage(string skid, string kid, string type, string message)
+    private static void ProcessVCTPSMessage(string skid, string kid, string type, string message)
     {
         switch (type) // Alice sending a NOTIFY and a VCA
         {
@@ -157,7 +157,7 @@ public class Program
                     WorkflowEngine.ProcessCredential(); // TODO
                     break;
                 }
-            case VCTPSMessageFactory.POLL: // On receipt, Alice (and co.) replues with a NOTIFY and VCA
+            case VCTPSMessageFactory.POLL: // On receipt, Alice (and co.) replies with a NOTIFY and VCA
                 {
                     // TODO
                     break;

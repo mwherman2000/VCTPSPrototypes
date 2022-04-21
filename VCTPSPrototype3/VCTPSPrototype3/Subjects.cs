@@ -6,7 +6,7 @@ using System.Text.Json;
 using Okapi.Security;
 using Okapi.Security.V1;
 
-namespace Actors
+namespace Subjects
 {
     public static class Charlie
     {

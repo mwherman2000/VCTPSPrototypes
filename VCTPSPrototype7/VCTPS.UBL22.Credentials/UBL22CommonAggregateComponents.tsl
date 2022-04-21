@@ -1,0 +1,267 @@
+struct Cac_Address
+{
+	optional string	cbc_ID;
+	optional string	cbc_AddressTypeCode;
+	optional string	cbc_AddressFormatCode;
+	optional string	cbc_Postbox;
+	optional string	cbc_Floor;
+	optional string	cbc_Room;
+	optional string	cbc_StreetName;
+	optional string	cbc_AdditionalStreetName;
+	optional string	cbc_BlockName;
+	optional string	cbc_BuildingName;
+	optional string	cbc_BuildingNumber;
+	optional string	cbc_InhouseMail;
+	optional string	cbc_Department;
+	optional string	cbc_MarkAttention;
+	optional string	cbc_MarkCare;
+	optional string	cbc_PlotIdentification;
+	optional string	cbc_CitySubdivisionName;
+	optional string	cbc_CityName;
+	optional string	cbc_PostalZone;
+	optional string	cbc_CountrySubentity;
+	optional string	cbc_CountrySubentityCode;
+	optional string	cbc_Region;
+	optional string	cbc_District;
+	optional string	cbc_TimezoneOffset;
+	optional List<Cac_AddressLine>	cac_AddressLine;
+	optional string	cac_Country;
+}
+
+struct Cac_AddressLine
+{
+	string	cbc_Line;
+}
+
+struct Cac_Contact
+{
+	optional string	cbc_ID;
+	optional string	cbc_Name;
+	optional string	cbc_Telephone;
+	optional string	cbc_Telefax;
+	optional string	cbc_ElectronicMail;
+	optional List<string>	cbc_Note;
+}
+
+struct Cac_PurchaseOrder
+{
+	string	cbc_ID;
+	optional string	cbc_UUID;
+	DateTime	cbc_IssueDate;
+	optional List<string>	cbc_Note;
+	string	cac_SupplierPartyUdid; // Cac_SupplierParty
+	string	cac_CustomerPartyUdid; // Cac_CustomerParty
+	optional string	cac_PayeePartyUdid; // optional Cac_Party
+	Cac_MonetaryTotal	cac_LegalMonetaryTotal;
+	List<string>	cac_InvoiceLineUdid; // Cac_InvoiceLine
+}
+
+struct Cac_SalesOrder
+{
+	string	cbc_ID;
+	optional string	cbc_UUID;
+	DateTime	cbc_IssueDate;
+	optional List<string>	cbc_Note;
+	string	cac_SupplierPartyUdid; // Cac_SupplierParty
+	string	cac_CustomerPartyUdid; // Cac_CustomerParty
+	optional string	cac_PayeePartyUdid; // optional Cac_Party
+	Cac_MonetaryTotal	cac_LegalMonetaryTotal;
+	List<string>	cac_InvoiceLineUdid; // Cac_InvoiceLine
+}
+
+struct Cac_Invoice
+{
+	string	cbc_ID;
+	optional string	cbc_UUID;
+	DateTime	cbc_IssueDate;
+	optional DateTime	cbc_DueDate;
+	optional List<string>	cbc_Note;
+	optional List<Cac_Period>	cac_InvoicePeriod;
+	optional string	cac_OrderReference;
+	string	cac_SupplierPartyUdid; // Cac_SupplierParty
+	string	cac_CustomerPartyUdid; // Cac_CustomerParty
+	optional string	cac_PayeePartyUdid; // optional Cac_Party
+	Cac_MonetaryTotal	cac_LegalMonetaryTotal;
+	List<string>	cac_InvoiceLineUdid; // Cac_InvoiceLine
+}
+
+struct Cac_InvoiceLine
+{
+	string	cbc_ID;
+	optional string	cbc_UUID;
+	optional List<string>	cbc_Note;
+	optional string	cbc_InvoicedQuantity;
+	string	cbc_LineExtensionAmount;
+	optional DateTime	cbc_TaxPointDate;
+	optional string	cbc_AccountingCostCode;
+	optional string	cbc_AccountingCost;
+	optional string	cbc_PaymentPurposeCode;
+	optional string	cbc_FreeOfChargeIndicator;
+	Cac_Item	cac_Item;
+	optional Cac_Price	cac_Price;
+}
+
+struct Cac_Price
+{
+	string	cbc_PriceAmount;
+	optional string	cbc_BaseQuantity;
+	optional List<string>	cbc_PriceChangeReason;
+	optional string	cbc_PriceTypeCode;
+	optional string	cbc_PriceType;
+}
+
+struct Cac_Item
+{
+	optional List<string>	cbc_Description;
+	optional string	cbc_PackQuantity;
+	optional string	cbc_PackSizeNumeric;
+	optional string	cbc_CatalogueIndicator;
+	optional string	cbc_Name;
+	optional List<string>	cbc_AdditionalInformation;
+	optional List<string>	cbc_Keyword;
+	optional List<string>	cbc_BrandName;
+	optional List<string>	cbc_ModelName;
+}
+
+struct Cac_MonetaryTotal
+{
+	optional string	cbc_LineExtensionAmount;
+	optional string	cbc_TaxExclusiveAmount;
+	optional string	cbc_TaxInclusiveAmount;
+	optional string	cbc_AllowanceTotalAmount;
+	optional string	cbc_ChargeTotalAmount;
+	optional string	cbc_PrepaidAmount;
+	optional string	cbc_PayableRoundingAmount;
+	string	cbc_PayableAmount;
+	optional string	cbc_PayableAlternativeAmount;
+}
+
+struct Cac_Party
+{
+	optional string	cbc_MarkCareIndicator;
+	optional string	cbc_MarkAttentionIndicator;
+	optional string	cbc_WebsiteURI;
+	optional string	cbc_LogoReferenceID;
+	optional string	cbc_EndpointID;
+	optional string	cbc_IndustryClassificationCode;
+	optional List<string>	cac_PartyIdentification;
+	optional List<string>	cac_PartyName;
+	optional Cac_Address	cac_PostalAddress;
+	optional Cac_Contact	cac_Contact;
+	optional List<string>	cac_PersonUdid; // optional Cac_Person
+}
+
+struct Cac_CustomerParty
+{
+	optional string	cbc_CustomerAssignedAccountID;
+	optional string	cbc_SupplierAssignedAccountID;
+	optional List<string>	cbc_AdditionalAccountID;
+	optional string	cac_PartyUdid; // optional Cac_Party
+	optional Cac_Contact	cac_DeliveryContact;
+	optional Cac_Contact	cac_AccountingContact;
+	optional Cac_Contact	cac_BuyerContact;
+}
+
+struct Cac_SupplierParty
+{
+	optional string	cbc_CustomerAssignedAccountID;
+	optional List<string>	cbc_AdditionalAccountID;
+	optional string	cbc_DataSendingCapability;
+	optional string	cac_PartyUdid; // optional Cac_Party
+	optional Cac_Contact	cac_DespatchContact;
+	optional Cac_Contact	cac_AccountingContact;
+	optional Cac_Contact	cac_SellerContact;
+}
+
+struct Cac_Period
+{
+	optional DateTime	cbc_StartDate;
+	optional DateTime	cbc_StartTime;
+	optional DateTime	cbc_EndDate;
+	optional DateTime	cbc_EndTime;
+	optional string	cbc_DurationMeasure;
+	optional List<string>	cbc_DescriptionCode;
+	optional List<string>	cbc_Description;
+}
+
+struct Cac_Person
+{
+	optional string	cbc_ID;
+	optional string	cbc_FirstName;
+	optional string	cbc_FamilyName;
+	optional string	cbc_Title;
+	optional string	cbc_MiddleName;
+	optional string	cbc_OtherName;
+	optional string	cbc_NameSuffix;
+	optional string	cbc_JobTitle;
+	optional string	cbc_NationalityID;
+	optional string	cbc_GenderCode;
+	optional DateTime	cbc_BirthDate;
+	optional string	cbc_BirthplaceName;
+	optional string	cbc_OrganizationDepartment;
+	optional Cac_Contact	cac_Contact;
+	optional Cac_Address	cac_ResidenceAddress;
+}
+
+struct Cac_Status
+{
+	optional string	cbc_ConditionCode;
+	optional DateTime	cbc_ReferenceDate;
+	optional DateTime	cbc_ReferenceTime;
+	optional List<string>	cbc_Description;
+	optional string	cbc_StatusReasonCode;
+	optional List<string>	cbc_StatusReason;
+	optional string	cbc_SequenceID;
+	optional List<string>	cbc_Text;
+	optional string	cbc_IndicationIndicator;
+	optional string	cbc_Percent;
+	optional string	cbc_ReliabilityPercent;
+}
+
+struct Cac_TransportEvent
+{
+	optional string	cbc_IdentificationID;
+	optional DateTime	cbc_OccurrenceDate;
+	optional DateTime	cbc_OccurrenceTime;
+	optional string	cbc_TransportEventTypeCode;
+	optional List<string>	cbc_Description;
+	optional string	cbc_CompletionIndicator;
+	optional string	cac_ReportedShipmentUdid; // optional Cac_Shipment
+	optional List<Cac_Status>	cac_CurrentStatus;
+	optional List<Cac_Contact>	cac_Contact;
+	optional string	cac_LocationUdid; // optional Cac_Location
+	optional List<Cac_Period>	cac_Period;
+}
+
+struct Cac_Shipment
+{
+	string	cbc_ID;
+	optional List<string>	cbc_HandlingInstructions;
+	optional List<string>	cbc_Information;
+	optional string	cbc_GrossWeightMeasure;
+	optional string	cbc_TotalGoodsItemQuantity;
+	optional List<string>	cbc_SpecialInstructions;
+	optional List<string>	cbc_DeliveryInstructions;
+	optional List<string>	cac_GoodsItemUdid; // optional Cac_GoodsItem
+	optional Cac_Address	cac_ReturnAddress;
+	optional Cac_Address	cac_OriginAddress;
+}
+
+struct Cac_Waybill
+{
+	optional string	cbc_UBLVersionID;
+	string	cbc_ID;
+	optional string	cbc_CarrierAssignedID;
+	optional string	cbc_UUID;
+	optional DateTime	cbc_IssueDate;
+	optional string	cbc_Name;
+	optional List<string>	cbc_Description;
+	optional List<string>	cbc_Note;
+	optional string	cbc_ShippingOrderID;
+	optional string	cbc_DeclaredCarriageValueAmount;
+	optional List<string>	cbc_OtherInstruction;
+	optional string	cac_CarrierPartyUdid; // optional Cac_Party
+	optional string	cac_FreightForwarderPartyUdid; // optional Cac_Party
+	string	cac_ShipmentUdid; // Cac_Shipment
+}
+

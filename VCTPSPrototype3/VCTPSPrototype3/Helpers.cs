@@ -23,11 +23,18 @@ namespace VCTPSPrototype3
             int nBytes = nfeJsonEnvelopeStream.Read(res);
             string template = Encoding.UTF8.GetString(res);
 
+            if (String.IsNullOrEmpty(template)) throw new NullReferenceException("GetTemplate");
+
             return template;
         }
+    }
 
+    public static class DIDCOMMHelpers
+    {
         public static int MessagesSent = 0;
-        static readonly HttpClient httpClient = new HttpClient(); // https://www.thecodebuzz.com/using-httpclient-best-practices-and-anti-patterns/
+        static readonly HttpClient httpClient = new HttpClient(); 
+        // https://www.thecodebuzz.com/using-httpclient-best-practices-and-anti-patterns/
+
         private static string SendHttpMessage(string url, string jsonRequest)
         {
             string jsonResponse;
@@ -63,7 +70,7 @@ namespace VCTPSPrototype3
                 recipients64: new List<string>() { emessage.Recipients[0].ToByteString().ToBase64() });
             DIDCOMMMessage msg = new DIDCOMMMessage(em);
             var emJson = msg.ToString();
-            jsonResponse = Helpers.SendHttpMessage(DIDCOMMEndpointUrl, emJson);
+            jsonResponse = DIDCOMMHelpers.SendHttpMessage(DIDCOMMEndpointUrl, emJson);
             Console.WriteLine(">>Response:" + jsonResponse);
 
             return jsonResponse;

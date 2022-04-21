@@ -1,25 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="DIDCOMMAgent.tsl" />
-    <None Remove="vca2.json" />
-    <None Remove="vcaack2.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="vca2.json" />
+    <None Remove="VCTPSVCAACKCredential.tsl" />
+    <None Remove="VCTPSVCACredential.tsl" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.20.0" />
     <PackageReference Include="GraphEngine.Core" Version="2.0.11318" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VCTPS.Common\VCTPS.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,7 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TslCodegen Include="DIDCOMMAgent.tsl" />
+    <TslCodegen Include="VCTPSVCAACKCredential.tsl" />
+    <TslCodegen Include="VCTPSVCACredential.tsl">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </TslCodegen>
   </ItemGroup>
 
 </Project>

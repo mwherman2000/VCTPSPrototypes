@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using Okapi.Examples.V1;
 using System.Collections.Concurrent;
+using Subjects;
 
 namespace VCTPSPrototype3;
 
@@ -27,11 +28,15 @@ class DIDCOMMAgentImplementation : DIDCOMMAgentBase
         r.MergeFrom(ByteString.FromBase64(encryptedMessage.recipients64[0]));
         emessage.Recipients.Add(r);
 
-        string kid = r.Header.KeyId;
         string skid = r.Header.SenderKeyId;
+        string kid = r.Header.KeyId;
         Console.WriteLine("DIDCOMMEndpointHandler:" + skid + " to\r\n" + kid);
 
-        if (!Program.Queues.ContainsKey(kid)) Program.Queues.Add(kid, new ConcurrentQueue<EncryptedMessage>());
+        // Simulate multiple DIDCOMM Agents using queues
+        if (!Program.Queues.ContainsKey(kid))
+        {
+            Program.Queues.TryAdd(kid, new ConcurrentQueue<EncryptedMessage>());
+        }
         Program.Queues[kid].Enqueue(emessage);
 
         response.rc = (int)Trinity.TrinityErrorCode.E_SUCCESS;
@@ -42,7 +47,7 @@ class DIDCOMMAgentImplementation : DIDCOMMAgentBase
 
 public class Program
 {
-    public class ActorInfo
+    public class SubjectKeys
     {
         public string Name;
         public JsonWebKey MsgPk;
@@ -53,9 +58,11 @@ public class Program
         public long rpcPort;
     }
 
-    public static Dictionary<string, ConcurrentQueue<EncryptedMessage>> Queues = new Dictionary<string, ConcurrentQueue<EncryptedMessage>>();
     public static bool Processing = true;
-    public static Dictionary<string, ActorInfo> KeyVault = new Dictionary<string, ActorInfo>();
+    public static ConcurrentDictionary<string, ConcurrentQueue<EncryptedMessage>> Queues = 
+        new ConcurrentDictionary<string, ConcurrentQueue<EncryptedMessage>>();
+    public static Dictionary<string, SubjectKeys> KeyVault = new Dictionary<string, SubjectKeys>();
+
     public const string DIDCOMMEndpointUrl = "http://localhost:8081/DIDCOMMEndpoint/";
     public static string vcJson;
     public static string vcaJson;
@@ -63,19 +70,22 @@ public class Program
 
     static void Main(string[] args)
     {
-        Actors.Charlie.Initialize();
-        Actors.Delta.Initialize();
-        Actors.Echo.Initialize();
+        Charlie.Initialize();
+        Delta.Initialize();
+        Echo.Initialize();
 
-        KeyVault.Add(Actors.Charlie.KeyId, new ActorInfo { Name = Actors.Charlie.Name, MsgPk = Actors.Charlie.PublicKey, MsgSk = Actors.Charlie.SecretKey, 
-                    ProofPk = Actors.Charlie.ProofKey.Pk, ProofSk = Actors.Charlie.ProofKey.Sk });
-        KeyVault.Add(Actors.Delta.KeyId, new ActorInfo { Name = Actors.Delta.Name, MsgPk = Actors.Delta.PublicKey, MsgSk = Actors.Delta.SecretKey,
-                    ProofPk = Actors.Delta.ProofKey.Pk, ProofSk = Actors.Delta.ProofKey.Sk });
-        KeyVault.Add(Actors.Echo.KeyId, new ActorInfo { Name = Actors.Echo.Name, MsgPk = Actors.Echo.PublicKey, MsgSk = Actors.Echo.SecretKey,
-                    ProofPk = Actors.Echo.ProofKey.Pk, ProofSk = Actors.Echo.ProofKey.Sk });
+        KeyVault.Add(Charlie.KeyId, new SubjectKeys { 
+            Name = Charlie.Name, MsgPk = Charlie.PublicKey, MsgSk = Charlie.SecretKey, 
+            ProofPk = Charlie.ProofKey.Pk, ProofSk = Charlie.ProofKey.Sk });
+        KeyVault.Add(Delta.KeyId, new SubjectKeys { 
+            Name = Delta.Name, MsgPk = Delta.PublicKey, MsgSk = Delta.SecretKey,
+            ProofPk = Delta.ProofKey.Pk, ProofSk = Delta.ProofKey.Sk });
+        KeyVault.Add(Echo.KeyId, new SubjectKeys { 
+            Name = Echo.Name, MsgPk = Echo.PublicKey, MsgSk = Echo.SecretKey,
+            ProofPk = Echo.ProofKey.Pk, ProofSk = Echo.ProofKey.Sk });
 
-        vcJson = Helpers.GetTemplate("VCTPSPrototype3.vc2.json");
-        vcaJson = Helpers.GetTemplate("VCTPSPrototype3.vca2.json");
+        vcJson =     Helpers.GetTemplate("VCTPSPrototype3.vc2.json");
+        vcaJson =    Helpers.GetTemplate("VCTPSPrototype3.vca2.json");
         vcaackJson = Helpers.GetTemplate("VCTPSPrototype3.vcaack2.json");
 
         Trinity.TrinityConfig.HttpPort = 8081;
@@ -83,10 +93,12 @@ public class Program
         didAgent.Start();
         Console.WriteLine("DIDCOMM Agent started...");
 
-        var notify = VCTPSMessageFactory.NewNotifyMsg(Actors.Charlie.KeyId, new string[] { Actors.Delta.KeyId, Actors.Echo.KeyId }, vcaJson);
+        var notify = VCTPSMessageFactory.NewNotifyMsg(
+            Charlie.KeyId, new string[] { Delta.KeyId, Echo.KeyId }, vcaJson
+        );
         foreach (var to in notify.To.ToList())
         {
-            Helpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, notify.From, to, notify );
+            DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, notify.From, to, notify );
         }
 
         while(Processing)
@@ -101,10 +113,9 @@ public class Program
                     bool dequeued = emessages.TryDequeue(out emessage);
                     if (dequeued) ProcessEncryptedMessage(emessage);
                 }
-                Queues.Remove(kid);
             }
 
-            Console.WriteLine("Sleeping... " + Helpers.MessagesSent.ToString() + " msgs sent. " + didAgent.MessagesReceived.ToString() + " msgs received.");
+            Console.WriteLine("Sleeping... " + DIDCOMMHelpers.MessagesSent.ToString() + " msgs sent. " + didAgent.MessagesReceived.ToString() + " msgs received.");
             Thread.Sleep(100);
         }
 
@@ -130,55 +141,43 @@ public class Program
         basic.MergeFrom(core.Body);
         Console.WriteLine("BasicMessage: " + core.Type + " " + basic.Text);
 
-        ProcessDIDCOMMMessage(skid, kid, core.Type, basic.Text);
+        ProcessVCTPSMessage(skid, kid, core.Type, basic.Text);
     }
 
-    private static void ProcessDIDCOMMMessage(string skid, string kid, string type, string message)
+    private static void ProcessVCTPSMessage(string skid, string kid, string type, string message)
     {
+        Console.WriteLine("VCTPS message: " + message);
+
         switch (type) // Alice sending a NOTIFY and a VCA
         {
             case VCTPSMessageFactory.NOTIFY: // On receipt, Bob replies with a PULL and VCAACK
                 {
-                    var pull = VCTPSMessageFactory.NewPullMsg(skid, new string[] { kid }, vcaackJson);
+                    var pull = VCTPSMessageFactory.NewPullMsg(kid, new string[] { skid }, vcaackJson);
                     foreach (var to in pull.To.ToList())
                     {
-                        Helpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull.From, to, pull);
+                        DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull.From, to, pull);
                     }
                     break;
                 }
             case VCTPSMessageFactory.PULL: // On receipt, Alice replies with a PUSH, VC and VCAACK
                 {
-                    var pull = VCTPSMessageFactory.NewPushMsg(skid, new string[] { kid }, vcaackJson, vcJson);
+                    var pull = VCTPSMessageFactory.NewPushMsg(kid, new string[] { skid }, vcaackJson, vcJson);
                     foreach (var to in pull.To.ToList())
                     {
-                        Helpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull.From, to, pull);
+                        DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull.From, to, pull);
                     }
                     break;
                 }
             case VCTPSMessageFactory.PUSH: // On receipt, Bob has received the VC and VCAACK
                 {
+                    // New credential received, process it according to processing rights in VCAACK
+                    WorkflowEngine.ProcessCredential(); // TODO
                     break;
                 }
-            case VCTPSMessageFactory.POLL: // On receipt, Alice (and co.) replues with a NOTIFY and VCA
+            case VCTPSMessageFactory.POLL: // On receipt, Alice (and co.) replies with a NOTIFY and VCA
                 {
                     break;
                 }
         }
     }
 }
-
-/* emessage:
-{
-    "iv": "eJwEmTlycyaThqwc72Ra9/5dfU/DcfpF",
-    "ciphertext": "Gis5eT7nFQk5bD2Lj3xRHvZbRDb0stxG6OyvcMZUYW0FomdRVi9v/yGnfnKDgxO0/ZtzhnhjbuZ91N+6N//KpgUCR7UGBO253+5+NkjMxUMaqyvWZ2F2cXvXidjNmvG/Q/W0QnlqmAA4kQirxVsZJGUhe23pl+G6IQJA9Y7l7PBmDVANZN+HmdzOwKHpsX78Pk5L57hOu2xgaJXOe9AaoWbG18+QdZspMTWXCLeTUH/QbRpc0ZXHZbJ8PKFleqs4hlE3sJWgH2uL6F9fs6EM6rp4YcMfbrtwiVDLbaK8kBYOfGeJOTGhdN3FfAKU0/gVNgK+n5R3ff2jd41fEWvZ61w5AnPFwH15NDe7PtjO7TsWjDzKC+4YMKR5soiOVRNPqtFHbXp6r/wuqliLOOly9bHF7xXo93NUdEraWL5AUE+TqD5q7eqle5rSzYr8eVYjqh5Q8NKbsPjJcrhqVs+USfk4gsk5TagpSSvwKMLYg7v6gppTl2CdMA/j3NPnkyj7qpEmRIE0PhOSoe6orpK+NxxKuXg+TYmfocBDhbD4bdbB6rnEBKjSEA1NjXXXtJz2HLmlPpwiuRXy58CNFx4zzQRe7A8=",
-    "tag": "O/vo05SsIwvgVVczruzTew==",
-    "recipients": [
-        {
-            "unprotected": {
-                "kid": "did:key:z6LSjNJkeDgNYHzdwWhJrq8yMUswoGYRbwt9vZFiV9xh6kb1#z6LSjNJkeDgNYHzdwWhJrq8yMUswoGYRbwt9vZFiV9xh6kb1",
-                "skid": "did:key:z6LSprVN4NQZsDLyLfXbSxGKR7cLXKZTDDrzrLz3iridET43#z6LSprVN4NQZsDLyLfXbSxGKR7cLXKZTDDrzrLz3iridET43"
-            }
-        }
-    ]
-}
-*/

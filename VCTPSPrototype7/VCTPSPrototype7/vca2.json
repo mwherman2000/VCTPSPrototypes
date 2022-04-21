@@ -1,0 +1,60 @@
+{
+  "sealedEnvelope": {
+    "envelope": {
+      "udid": "did:svrn:vca:d5e5c9d4-4159-4eda-b427-2dfb0051ebb3",
+      "label": {
+        "types": [
+          "Verifiable Credential",
+          "Structured Credential",
+          "Verifiable Capability Authorization 1"
+        ],
+        "credtype": "BlueToqueVca",
+        "version": 1,
+        "trustLevel": "HashedThumbprint",
+        "encryptionFlag": "NotEncrypted",
+        "name": "Verifiable Capability Authorization 2",
+        "comments": [
+          "Verifiable Capability Authorization for a Payload (i.e. a VC)"
+        ],
+        "vca64": ""
+      },
+      "content": {
+        "udid": "did:svrn:vca:d5e5c9d4-4159-4eda-b427-2dfb0051ebb3",
+        "context": [
+          "https://www.sovrona.com/ns/svrn/v1"
+        ],
+        "credentialsubjectudid": "did:svrn:vca:d5e5c9d4-4159-4eda-b427-2dfb0051ebb3",
+        "claims": {
+          "type": "Proclamation",
+          "parent": "did:svrn:vca:02CB18CB-A2E8-4F80-B1A4-548AE3F59256",
+          "subject": "did:svrn:vc:0B114A04-2559-4C68-AE43-B7004646BD76",
+          "grantedKey": "did:svrn:agent:04900EEF-38E7-487E-8D6F-09D6C95D9D3E",
+          "caveat": {
+            "id": "did:svrn:vca:d5e5c9d4-4159-4eda-b427-2dfb0051ebb3#rights",
+            "rights": [
+              "receive",
+              "accept",
+              "verify",
+              "inspect",
+              "process"
+            ],
+            "restrictions": [
+              "forward"
+            ],
+            "processing": [
+              "approve",
+              "reject",
+              "rejectwithchanges"
+            ]
+          }
+        }
+      }
+    },
+    "proof": {
+      "hashedThumbprint64": "yhKwqkzHudMo4GiWmFFpJZTTLl/YhwLfVx6ki27q8gI=",
+      "comments": [
+        "SHA3-256 Hashed Thumbprint stored as Base64 string"
+      ]
+    }
+  }
+}

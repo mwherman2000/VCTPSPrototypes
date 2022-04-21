@@ -25,6 +25,8 @@ namespace VCTPSCommon
             int nBytes = nfeJsonEnvelopeStream.Read(res);
             string template = Encoding.UTF8.GetString(res);
 
+            if (String.IsNullOrEmpty(template)) throw new NullReferenceException("GetTemplate");
+
             return template;
         }
 

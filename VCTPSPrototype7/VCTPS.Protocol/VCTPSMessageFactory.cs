@@ -9,12 +9,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VCTPSPrototype2
+namespace VCTPS.Protocol
 {
     public static class VCTPSMessageFactory
     {
+        public const string POLL = "https://example.org/vctp/1.0/poll";
+        public const string NOTIFY = "https://example.org/vctp/1.0/notify";
+        public const string PULL = "https://example.org/vctp/1.0/pull";
+        public const string PUSH = "https://example.org/vctp/1.0/push";
+        public static Dictionary<string, string> MessageTypes = new Dictionary<string, string>() {
+            { POLL, "poll" },
+            { NOTIFY, "notify" },
+            { PULL, "pull" },
+            { PUSH, "push" }
+        };
+
         // NewPollMsg: Do you have anything to send me? If you do, send me a 'notify' message with a VCA (which includes a payload identifier)
         public static CoreMessage NewPollMsg(string from, string[] to, long expires = 0)
+        {
+            CoreMessage core = NewPollMsg(from, to, "", expires);
+            return core;
+        }
+
+        public static CoreMessage NewPollMsg(string from, string[] to, string vcaJson, long expires = 0)
         {
             CoreMessage core = new CoreMessage();
 
@@ -22,7 +39,8 @@ namespace VCTPSPrototype2
             core.Type = "https://example.org/vctp/1.0/poll";
 
             var message = new BasicMessage();
-            message.Text = "{ }";
+            if (String.IsNullOrEmpty(vcaJson)) vcaJson = "{ }";
+            message.Text = String.Format("{{ vca : {0} }}", vcaJson);
             core.Body = message.ToByteString();
 
             core.Expires = expires;
@@ -33,10 +51,8 @@ namespace VCTPSPrototype2
             return core;
         }
 
-        // NewNotifyMsg: I have a payload for you. Here's a VCA (which includes a payload identifier)
-        //               for you to acknowledge and agree to.
-        //               Send me a 'pull' message containing a VCA Acknowledgement confirming your
-        //               agreement with the VCA and I'll send you the payload
+        // NewNotifyMsg: I have a payload for you. Here's a VCA (which includes a payload identifier) for you to acknowledge and agree to.
+        //               Send me a 'pull' message containing a VCA Acknowledgement confirming your agreement with the VCA and I'll send you the payload
         public static CoreMessage NewNotifyMsg(string from, string[] to, string vcaJson, long expires = 0)
         {
             CoreMessage core = new CoreMessage();

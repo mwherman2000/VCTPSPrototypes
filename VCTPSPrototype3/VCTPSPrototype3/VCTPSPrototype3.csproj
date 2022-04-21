@@ -8,14 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="BTTGenericCredential.tsl" />
     <None Remove="DIDCOMMAgent.tsl" />
+    <None Remove="vc2.json" />
     <None Remove="vca2.json" />
     <None Remove="vcaack2.json" />
     <None Remove="VCTPS.tsl" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="vc2.json" />
     <EmbeddedResource Include="vca2.json" />
     <EmbeddedResource Include="vcaack2.json" />
   </ItemGroup>
@@ -32,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TslCodegen Include="BTTGenericCredential.tsl" />
     <TslCodegen Include="DIDCOMMAgent.tsl" />
   </ItemGroup>
 

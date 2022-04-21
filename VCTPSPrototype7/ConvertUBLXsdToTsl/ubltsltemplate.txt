@@ -1,0 +1,25 @@
+//////////////////////////////////////////////////////////////////////////////
+// UBL 2.2 %TYPE%
+// Generated: %DATETIME%
+
+struct BTT_%TYPE%_EnvelopeContent
+{
+	string udid;	
+	List<string> context;
+	optional string credentialsubjectudid; // bound credential
+	Cac_%TYPE% claims;
+	optional BTTEncryptedClaims encryptedclaims;
+}
+
+struct BTT_%TYPE%_Envelope
+{
+	string udid;
+	BTTGenericCredential_PackingLabel label;
+	BTT_%TYPE%_EnvelopeContent content;
+}
+
+struct BTT_%TYPE%_SealedEnvelope
+{
+	BTT_%TYPE%_Envelope envelope;
+	BTTGenericCredential_EnvelopeSeal envelopeseal;
+}

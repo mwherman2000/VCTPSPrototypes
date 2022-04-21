@@ -1,22 +1,21 @@
-﻿{
+{
   "sealedEnvelope": {
     "envelope": {
-      "udid": "did:bluetoquenft:d5e5c9d4-4159-4eda-b427-2dfb0051ebb3",
+      "udid": "did:bluetoquenfe:d5e5c9d4-4159-4eda-b427-2dfb0051ebb3",
       "label": {
-        "types": [ "Verifiable Credential", "Structured Credential", "BlueToqueNft" ],
-        "credtype": "BlueToqueNft",
+        "types": [ "Verifiable Credential", "Structured Credential", "BlueToqueNfe" ],
+        "credtype": "BlueToqueNfe",
         "version": 1,
         "trustLevel": "HashedThumbprint",
         "encryptionFlag": "NotEncrypted",
         "name": "N4K NFE Kiss",
-        "comments": [ "An BTT N4K NFE Kiss Structured Credential" ],
-        "vca64": ""
+        "comments": [ "An BTT N4K NFE Kiss Structured Credential" ]
       },
       "content": {
         "udid": "did:bluetoquenfe:d5e5c9d4-4159-4eda-b427-2dfb0051ebb3",
         "context": [ "https://www.sovrona.com/ns/svrn/v1" ],
         "credentialsubjectudid": "did:bluetoquenfe:d5e5c9d4-4159-4eda-b427-2dfb0051ebb3",
-        "claims": {
+        "credentialsubjectclaims": {
           "kissCompass": 0,
           "purpose": "Romantic",
           "kissType": "Press",

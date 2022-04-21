@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using Okapi.Examples.V1;
 using Trinity;
+using Subjects;
 
 namespace VCTPSPrototype2;
 
@@ -18,14 +19,7 @@ class DIDCOMMAgentImplementation : DIDCOMMAgentBase
     { 
         DIDCOMMEncryptedMessage encryptedMessage = request.encryptedMessage;
 
-        // Save the DIDCOMMEncryptedMessage into a LocalStorage
-        // 'cell' in TSL adds CellId and causes a value to be assigned to it when it is created (new'ed)
-        DIDCOMMEncryptedMessage_Cell enscryptedMessageCell = new DIDCOMMEncryptedMessage_Cell(encryptedMessage);
-        Global.LocalStorage.SaveDIDCOMMEncryptedMessage_Cell(enscryptedMessageCell);
-        var celltype = Global.LocalStorage.GetCellType(enscryptedMessageCell.CellId);
-        ulong cellcount = Global.LocalStorage.CellCount;
-        Console.WriteLine("cellid: " + enscryptedMessageCell.CellId.ToString() + " celltype: " + celltype.ToString() + " cellcount: " + cellcount);
-
+        // Decrypt the DIDCOMMEncryptedMessage from the request
         EncryptedMessage emessage = new EncryptedMessage();
         emessage.Iv = ByteString.FromBase64(encryptedMessage.lv64);
         emessage.Ciphertext = ByteString.FromBase64(encryptedMessage.ciphertext64);
@@ -34,12 +28,31 @@ class DIDCOMMAgentImplementation : DIDCOMMAgentBase
         r.MergeFrom(ByteString.FromBase64(encryptedMessage.recipients64[0]));
         emessage.Recipients.Add(r);
 
-        var decryptedMessage = DIDComm.Unpack(new UnpackRequest { Message = emessage, SenderKey = Actors.Charlie.PublicKey, ReceiverKey = Actors.Delta.SecretKey });
+        Console.WriteLine(emessage.Recipients.Count.ToString());
+        Console.WriteLine(emessage.Recipients[0].Header.SenderKeyId);
+        Console.WriteLine(emessage.Recipients[0].Header.KeyId);
+
+        string skidid = emessage.Recipients[0].Header.SenderKeyId;
+        string keyid = emessage.Recipients[0].Header.KeyId;
+
+        var decryptedMessage = DIDComm.Unpack(
+          new UnpackRequest { Message = emessage, 
+            SenderKey = Program.KeyVault[skidid].MsgPk, ReceiverKey = Program.KeyVault[keyid].MsgSk
+          }
+        );
         var plaintext = decryptedMessage.Plaintext;
         CoreMessage core = new CoreMessage();
         core.MergeFrom(plaintext);
         BasicMessage basic = new BasicMessage();
         basic.MergeFrom(core.Body);
+
+        // Save the DIDCOMMEncryptedMessage into a LocalStorage
+        // 'cell' in TSL adds CellId and causes a value to be assigned to it when it is created (new'ed)
+        DIDCOMMEncryptedMessage_Cell encryptedMessageCell = new DIDCOMMEncryptedMessage_Cell(encryptedMessage);
+        Global.LocalStorage.SaveDIDCOMMEncryptedMessage_Cell(encryptedMessageCell);
+        var celltype = Global.LocalStorage.GetCellType(encryptedMessageCell.CellId);
+        ulong cellcount = Global.LocalStorage.CellCount;
+        Console.WriteLine("cellid: " + encryptedMessageCell.CellId.ToString() + " celltype: " + celltype.ToString() + " cellcount: " + cellcount);
 
         response.rc = (int)Trinity.TrinityErrorCode.E_SUCCESS;
     }
@@ -47,30 +60,32 @@ class DIDCOMMAgentImplementation : DIDCOMMAgentBase
 
 public class Program
 {
-    class ActorInfo
+    public class SubjectKeys
     {
         public string Name;
-        public JsonWebKey MsgPk;
-        public JsonWebKey MsgSk;
-        public long httpPort;
-        public long rpcPort;
-        public ByteString ProofPk;
-        public ByteString ProofSk;
+        public JsonWebKey MsgPk;    // Identity, Message Encryption/Decryption
+        public JsonWebKey MsgSk;    // Identity, Message Encryption/Decryption
+        public ByteString ProofPk;  // Creation/Verification of Credential Proofs
+        public ByteString ProofSk;  // Creation/Verification of Credential Proofs
     }
+
+    public static Dictionary<string, SubjectKeys> KeyVault = new Dictionary<string, SubjectKeys>();
 
     static void Main(string[] args)
     {
-        Actors.Charlie.Initialize();
-        Actors.Delta.Initialize();
-        Actors.Echo.Initialize();
+        Charlie.Initialize();
+        Delta.Initialize();
+        Echo.Initialize();
 
-        Dictionary<string,ActorInfo> actors = new Dictionary<string, ActorInfo>();
-        actors.Add(Actors.Charlie.KeyId, new ActorInfo { Name = Actors.Charlie.Name, MsgPk = Actors.Charlie.PublicKey, MsgSk = Actors.Charlie.SecretKey, 
-                    ProofPk = Actors.Charlie.ProofKey.Pk, ProofSk = Actors.Charlie.ProofKey.Sk });
-        actors.Add(Actors.Delta.KeyId, new ActorInfo { Name = Actors.Delta.Name, MsgPk = Actors.Delta.PublicKey, MsgSk = Actors.Delta.SecretKey,
-                    ProofPk = Actors.Delta.ProofKey.Pk, ProofSk = Actors.Delta.ProofKey.Sk });
-        actors.Add(Actors.Echo.KeyId, new ActorInfo { Name = Actors.Echo.Name, MsgPk = Actors.Echo.PublicKey, MsgSk = Actors.Echo.SecretKey,
-                    ProofPk = Actors.Echo.ProofKey.Pk, ProofSk = Actors.Echo.ProofKey.Sk });
+        KeyVault.Add(Charlie.KeyId, new SubjectKeys { 
+            Name = Charlie.Name, MsgPk = Charlie.PublicKey, MsgSk = Charlie.SecretKey, 
+            ProofPk = Charlie.ProofKey.Pk, ProofSk = Charlie.ProofKey.Sk });
+        KeyVault.Add(Delta.KeyId, new SubjectKeys { 
+            Name = Delta.Name, MsgPk = Delta.PublicKey, MsgSk = Delta.SecretKey,
+            ProofPk = Delta.ProofKey.Pk, ProofSk = Delta.ProofKey.Sk });
+        KeyVault.Add(Echo.KeyId, new SubjectKeys { 
+            Name = Echo.Name, MsgPk = Echo.PublicKey, MsgSk = Echo.SecretKey,
+            ProofPk = Echo.ProofKey.Pk, ProofSk = Echo.ProofKey.Sk });
 
         string vcaJson = Helpers.GetTemplate("VCTPSPrototype2.vca2.json");
 
@@ -79,11 +94,13 @@ public class Program
         didAgent.Start();
         Console.WriteLine("DIDCOMM Agent started...");
 
-        var notify = VCTPSMessageFactory.NewNotifyMsg(Actors.Charlie.KeyId, new string[] { Actors.Delta.KeyId, Actors.Echo.KeyId }, vcaJson);
-        foreach (var to in notify.To.ToList())
+        var notify = VCTPSMessageFactory.NewNotifyMsg(
+            Charlie.KeyId, new string[] { Delta.KeyId, Echo.KeyId }, vcaJson
+        );
+        foreach (var tokeyid in notify.To.ToList())
         {
-            Console.WriteLine("Sending to: " + actors[to].Name + "\t" + to); ;
-            var encryptedPackage = DIDComm.Pack(new PackRequest { Plaintext = notify.ToByteString(), SenderKey = Actors.Charlie.SecretKey, ReceiverKey = actors[to].MsgPk, Mode = EncryptionMode.Direct });
+            Console.WriteLine("Sending to: " + KeyVault[tokeyid].Name + "\t" + tokeyid); ;
+            var encryptedPackage = DIDComm.Pack(new PackRequest { Plaintext = notify.ToByteString(), SenderKey = Charlie.SecretKey, ReceiverKey = KeyVault[tokeyid].MsgPk, Mode = EncryptionMode.Direct });
             var emessage = encryptedPackage.Message;
             DIDCOMMEncryptedMessage em = new DIDCOMMEncryptedMessage(emessage.Iv.ToBase64(), emessage.Ciphertext.ToBase64(), emessage.Tag.ToBase64(),
                 recipients64: new List<string>() { emessage.Recipients[0].ToByteString().ToBase64() });
