@@ -91,17 +91,17 @@ namespace VCTPSCommon
     {
         public static string ComputeHashProof(string hash64, ByteString proofSk, string nonce64)
         {
-            ByteString data = ByteString.FromBase64(hash64);
+            ByteString hash = ByteString.FromBase64(hash64);
             var token = Oberon.CreateToken(new CreateOberonTokenRequest
             {
-                Data = data,
+                Data = hash,
                 Sk = proofSk
             });
 
             ByteString nonce = ByteString.FromBase64(nonce64);
             CreateOberonProofResponse proof = Oberon.CreateProof(new CreateOberonProofRequest
             {
-                Data = data,
+                Data = hash,
                 Nonce = nonce,
                 Token = token.Token
             });

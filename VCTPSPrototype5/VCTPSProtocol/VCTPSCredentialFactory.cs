@@ -15,22 +15,39 @@ namespace VCTPSProtocol
     {
         public static VCTPS_VCA_SealedEnvelope NewVCACredential(string grantedkey, string vckid, List<string> rights, List<string> restrictions, List<string> processing, ByteString proofSk, string nonce64)
         {
+            // Generate a new DID for this VCA using the OKAPI library
             JsonWebKey vcaWebKey;
-            GenerateKeyResponse didKey = DIDKey.Generate(new GenerateKeyRequest { KeyType = KeyType.X25519 });
+            GenerateKeyResponse didKey = DIDKey.Generate(
+                new GenerateKeyRequest { KeyType = KeyType.X25519 });
             vcaWebKey = didKey.Key[0];
             string vcakey = vcaWebKey.Kid;
 
+            // Create the Claims
             VCTPS_VCA_Caveat caveat = new VCTPS_VCA_Caveat(vcakey, rights, restrictions, processing);
-            VCTPS_VCA_Claims claims = new VCTPS_VCA_Claims(VCTPS_VCA_Types.Proclamation.ToString(), null, vckid, grantedkey, caveat);
-            VCTPS_VCA_EnvelopeContent content = new VCTPS_VCA_EnvelopeContent(vcakey, BTTGenericCredential.DefaultContext, vcakey, claims, null);
+            VCTPS_VCA_Claims claims = new VCTPS_VCA_Claims(
+                VCTPS_VCA_Types.Proclamation.ToString(), null, vckid, grantedkey, caveat);
+
+            // Stuff the CredentialSubject ID and Claims into the Envelope Content structure
+            VCTPS_VCA_EnvelopeContent content = new VCTPS_VCA_EnvelopeContent(
+                vcakey, BTTGenericCredential.DefaultContext, vcakey, claims, null);
+            
+            // Create the Packing Label
             List<string> types = new List<string>(BTTGenericCredential.RootType);
             types.Add(BTTGenericCredential.DefaultVCAType);
-            BTTGenericCredential_PackingLabel label = new BTTGenericCredential_PackingLabel(types, BTTGenericCredentialType.VerifiableCapabilityAuthorization, 0, BTTTrustLevel.OberonProof, BTTEncryptionFlag.NotEncrypted, null, "VCA " + vcakey, new List<string> { "VCA " + vcakey }, "" );
+            BTTGenericCredential_PackingLabel label = new BTTGenericCredential_PackingLabel(
+                types, BTTGenericCredentialType.VerifiableCapabilityAuthorization, 0, BTTTrustLevel.OberonProof, BTTEncryptionFlag.NotEncrypted, null, "VCA " + vcakey, new List<string> { "VCA " + vcakey }, "" );
+
+            // Stuff the Content into the Envelope
+            // Attach a Packing Label to the outside of the Envelope
             VCTPS_VCA_Envelope envelope = new VCTPS_VCA_Envelope(vcakey, label, content);
+
+            // Calculate the Proof based on the Envelope and its Content (using the Oberon APIs)
             string json = envelope.ToString();
             string hash64 = SHA256Helpers.ComputeHash(json);
             string hashproof64 = ProofHelpers.ComputeHashProof(hash64, proofSk, nonce64);
             BTTGenericCredential_EnvelopeSeal proof = new BTTGenericCredential_EnvelopeSeal(hash64, hashproof64);
+
+            // Create a SealedEnvelope by attaching the Proof (Envelope Seal) to the outside of the Envelope
             VCTPS_VCA_SealedEnvelope sealedEnvelope = new VCTPS_VCA_SealedEnvelope(envelope, proof);
 
             //ComputeBenchmark(json, proofSk, nonce64);

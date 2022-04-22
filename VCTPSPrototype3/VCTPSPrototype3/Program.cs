@@ -1,15 +1,11 @@
-﻿using Okapi.Transport;
-using Okapi.Transport.V1;
-using System;
-using System.Text;
-using Google.Protobuf;
-using Okapi.Keys.V1;
-using Pbmse.V1;
-using System.Diagnostics;
-using System.Text.Json;
+﻿using Google.Protobuf;
 using Okapi.Examples.V1;
-using System.Collections.Concurrent;
+using Okapi.Keys.V1;
+using Okapi.Transport;
+using Okapi.Transport.V1;
+using Pbmse.V1;
 using Subjects;
+using System.Collections.Concurrent;
 
 namespace VCTPSPrototype3;
 
@@ -54,8 +50,6 @@ public class Program
         public JsonWebKey MsgSk;
         public ByteString ProofPk;
         public ByteString ProofSk;
-        public long httpPort;
-        public long rpcPort;
     }
 
     public static bool Processing = true;
@@ -131,7 +125,7 @@ public class Program
         r = emessage.Recipients.First<EncryptionRecipient>();   
         string kid = r.Header.KeyId;
         string skid = r.Header.SenderKeyId;
-        Console.WriteLine("ProcessMessage:" + skid + " to\r\n" + kid);
+        Console.WriteLine("ProcessEncryptedMessage:" + skid + " to\r\n" + kid);
 
         var decryptedMessage = DIDComm.Unpack(new UnpackRequest { Message = emessage, SenderKey = KeyVault[skid].MsgPk, ReceiverKey = KeyVault[kid].MsgSk });
         var plaintext = decryptedMessage.Plaintext;
@@ -144,6 +138,7 @@ public class Program
         ProcessVCTPSMessage(skid, kid, core.Type, basic.Text);
     }
 
+    // Implement the VCTPS DIDCOMM Protocol
     private static void ProcessVCTPSMessage(string skid, string kid, string type, string message)
     {
         Console.WriteLine("VCTPS message: " + message);
@@ -161,10 +156,10 @@ public class Program
                 }
             case VCTPSMessageFactory.PULL: // On receipt, Alice replies with a PUSH, VC and VCAACK
                 {
-                    var pull = VCTPSMessageFactory.NewPushMsg(kid, new string[] { skid }, vcaackJson, vcJson);
-                    foreach (var to in pull.To.ToList())
+                    var push = VCTPSMessageFactory.NewPushMsg(kid, new string[] { skid }, vcaackJson, vcJson);
+                    foreach (var to in push.To.ToList())
                     {
-                        DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull.From, to, pull);
+                        DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, push.From, to, push);
                     }
                     break;
                 }

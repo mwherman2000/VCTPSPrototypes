@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using Okapi.Examples.V1;
 using System.Collections.Concurrent;
+using Subjects;
 
 namespace VCTPSPrototype4;
 
@@ -30,13 +31,20 @@ class DIDCOMMAgentImplementation : DIDCOMMAgentBase
         string skid = r.Header.SenderKeyId;
         Console.WriteLine("DIDCOMMEndpointHandler: " + skid + " to\r\n" + kid);
 
-        if (!Program.Queues.ContainsKey(kid)) Program.Queues.Add(kid, new ConcurrentQueue<EncryptedMessage>());
+        if (!Program.Queues.ContainsKey(kid))
+        {
+            Program.Queues.TryAdd(kid, new ConcurrentQueue<EncryptedMessage>());
+        }
         Program.Queues[kid].Enqueue(emessage);
 
         response.rc = (int)Trinity.TrinityErrorCode.E_SUCCESS;
 
         Program.MessagesReceived++;
-        Console.WriteLine("DIDCOMMEndpointHandler: " + Helpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " + Helpers.HttpMessagesSent.ToString() + " HTTP sent. " + Program.MessagesReceived.ToString() + " HTTP rcvd.");
+        Console.WriteLine("DIDCOMMEndpointHandler: " 
+            + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " 
+            + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. "
+            + Program.MessagesReceived.ToString() + " HTTP rcvd. "
+            + Program.VCsProcessed.ToString() + " VCs proc.");
     }
 }
 
@@ -53,7 +61,8 @@ public class Program
         public long rpcPort;
     }
 
-    public static Dictionary<string, ConcurrentQueue<EncryptedMessage>> Queues = new Dictionary<string, ConcurrentQueue<EncryptedMessage>>();
+    public static ConcurrentDictionary<string, ConcurrentQueue<EncryptedMessage>> Queues = 
+        new ConcurrentDictionary<string, ConcurrentQueue<EncryptedMessage>>();
     public static bool Processing = true;
     public static Dictionary<string, ActorInfo> KeyVault = new Dictionary<string, ActorInfo>();
     public const string DIDCOMMEndpointUrl = "http://localhost:8081/DIDCOMMEndpoint/";
@@ -61,19 +70,23 @@ public class Program
     public static string vcaJson;
     public static string vcaackJson;
     public static int MessagesReceived = 0;
+    public static int VCsProcessed = 0;
 
     static void Main(string[] args)
     {
-        Actors.Charlie.Initialize();
-        Actors.Delta.Initialize();
-        Actors.Echo.Initialize();
+        Charlie.Initialize();
+        Delta.Initialize();
+        Echo.Initialize();
 
-        KeyVault.Add(Actors.Charlie.KeyId, new ActorInfo { Name = Actors.Charlie.Name, MsgPk = Actors.Charlie.PublicKey, MsgSk = Actors.Charlie.SecretKey, 
-                    ProofPk = Actors.Charlie.ProofKey.Pk, ProofSk = Actors.Charlie.ProofKey.Sk });
-        KeyVault.Add(Actors.Delta.KeyId, new ActorInfo { Name = Actors.Delta.Name, MsgPk = Actors.Delta.PublicKey, MsgSk = Actors.Delta.SecretKey,
-                    ProofPk = Actors.Delta.ProofKey.Pk, ProofSk = Actors.Delta.ProofKey.Sk });
-        KeyVault.Add(Actors.Echo.KeyId, new ActorInfo { Name = Actors.Echo.Name, MsgPk = Actors.Echo.PublicKey, MsgSk = Actors.Echo.SecretKey,
-                    ProofPk = Actors.Echo.ProofKey.Pk, ProofSk = Actors.Echo.ProofKey.Sk });
+        KeyVault.Add(Charlie.KeyId, new ActorInfo { 
+            Name = Charlie.Name, MsgPk = Charlie.PublicKey, MsgSk = Charlie.SecretKey, 
+            ProofPk = Charlie.ProofKey.Pk, ProofSk = Charlie.ProofKey.Sk });
+        KeyVault.Add(Delta.KeyId, new ActorInfo { 
+            Name = Delta.Name, MsgPk = Delta.PublicKey, MsgSk = Delta.SecretKey,
+            ProofPk = Delta.ProofKey.Pk, ProofSk = Delta.ProofKey.Sk });
+        KeyVault.Add(Echo.KeyId, new ActorInfo { 
+            Name = Echo.Name, MsgPk = Echo.PublicKey, MsgSk = Echo.SecretKey,
+            ProofPk = Echo.ProofKey.Pk, ProofSk = Echo.ProofKey.Sk });
 
         vcJson = Helpers.GetTemplate("VCTPSPrototype4.vc2.json");
         vcaJson = Helpers.GetTemplate("VCTPSPrototype4.vca2.json");
@@ -84,11 +97,8 @@ public class Program
         didAgent.Start();
         Console.WriteLine("DIDCOMM Agent started...");
 
-        var notify = VCTPSMessageFactory.NewNotifyMsg(Actors.Charlie.KeyId, new string[] { Actors.Delta.KeyId, Actors.Echo.KeyId }, vcaJson);
-        foreach (var to in notify.To.ToList())
-        {
-            Helpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, notify.From, to, notify );
-        }
+        var notify = VCTPSMessageFactory.NewNotifyMsg(Charlie.KeyId, new string[] { Delta.KeyId, Echo.KeyId }, vcaJson);
+        DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, notify);
 
         while(Processing)
         {
@@ -104,7 +114,11 @@ public class Program
                 }
             }
 
-            Console.WriteLine("Processing: " + Helpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " + Helpers.HttpMessagesSent.ToString() + " HTTP sent. " + Program.MessagesReceived.ToString() + " HTTP rcvd.");
+            Console.WriteLine("Processing: " 
+                + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " 
+                + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. " 
+                + Program.MessagesReceived.ToString() + " HTTP rcvd. "
+                + Program.VCsProcessed.ToString() + " VCs proc.");
             Thread.Sleep(100);
         }
 
@@ -140,25 +154,20 @@ public class Program
             case VCTPSMessageFactory.NOTIFY: // On receipt, Bob replies with a PULL and VCAACK
                 {
                     var pull = VCTPSMessageFactory.NewPullMsg(kid, new string[] { skid }, vcaackJson);
-                    foreach (var to in pull.To.ToList())
-                    {
-                        Helpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull.From, to, pull);
-                    }
+                    DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull);
                     break;
                 }
             case VCTPSMessageFactory.PULL: // On receipt, Alice replies with a PUSH, VC and VCAACK
                 {
-                    var pull = VCTPSMessageFactory.NewPushMsg(kid, new string[] { skid }, vcaackJson, vcJson);
-                    foreach (var to in pull.To.ToList())
-                    {
-                        Helpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull.From, to, pull);
-                    }
+                    var push = VCTPSMessageFactory.NewPushMsg(kid, new string[] { skid }, vcaackJson, vcJson);
+                    DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, push);
                     break;
                 }
             case VCTPSMessageFactory.PUSH: // On receipt, Bob has received the VC and VCAACK
                 {
                     // New credential received, process it according to processing rights in VCAACK
                     WorkflowEngine.ProcessCredential(); // TODO
+                    VCsProcessed++;
                     break;
                 }
             case VCTPSMessageFactory.POLL: // On receipt, Alice (and co.) replies with a NOTIFY and VCA

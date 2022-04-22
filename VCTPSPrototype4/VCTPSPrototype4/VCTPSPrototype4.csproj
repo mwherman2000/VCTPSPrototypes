@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="BTTGenericCredential.tsl" />
     <None Remove="DIDCOMMAgent.tsl" />
     <None Remove="vc2.json" />
     <None Remove="vca2.json" />
@@ -34,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TslCodegen Include="BTTGenericCredential.tsl" />
     <TslCodegen Include="DIDCOMMAgent.tsl" />
   </ItemGroup>
 

@@ -44,6 +44,14 @@ namespace VCTPSPrototype5
             return jsonResponse;
         }
 
+        public static void SendDIDCOMMMessage(string DIDCOMMEndpointUrl, CoreMessage core)
+        {
+            foreach (var to in core.To.ToList())
+            {
+                DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, core.From, to, core);
+            }
+        }
+
         public static string SendDIDCOMMMessage(string DIDCOMMEndpointUrl, string from, string to, CoreMessage core)
         {
             string jsonResponse = "{ }";

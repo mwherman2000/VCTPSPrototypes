@@ -35,25 +35,34 @@ class DIDCOMMAgentImplementation : DIDCOMMAgentBase
         string skid = r.Header.SenderKeyId;
         Console.WriteLine("DIDCOMMEndpointHandler: " + skid + " to\r\n" + kid);
 
-        if (!Program.Queues.ContainsKey(kid)) Program.Queues.Add(kid, new ConcurrentQueue<EncryptedMessage>());
+        if (!Program.Queues.ContainsKey(kid))
+        {
+            Program.Queues.TryAdd(kid, new ConcurrentQueue<EncryptedMessage>());
+        }
         Program.Queues[kid].Enqueue(emessage);
 
         response.rc = (int)Trinity.TrinityErrorCode.E_SUCCESS;
 
         Program.MessagesReceived++;
-        Console.WriteLine("DIDCOMMEndpointHandler: " + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. " + Program.MessagesReceived.ToString() + " HTTP rcvd.");
+        Console.WriteLine("DIDCOMMEndpointHandler: "
+            + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. "
+            + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. "
+            + Program.MessagesReceived.ToString() + " HTTP rcvd. "
+            + Program.VCsProcessed.ToString() + " VCs proc.");
     }
 }
 
 public class Program
 {
-    public static Dictionary<string, ConcurrentQueue<EncryptedMessage>> Queues = new Dictionary<string, ConcurrentQueue<EncryptedMessage>>();
+    public static ConcurrentDictionary<string, ConcurrentQueue<EncryptedMessage>> Queues = 
+        new ConcurrentDictionary<string, ConcurrentQueue<EncryptedMessage>>();
     public static bool Processing = true;
     public const string DIDCOMMEndpointUrl = "http://localhost:8081/DIDCOMMEndpoint/";
     public static string vcJson;
     public static string vcaJson;
     public static string vcaackJson;
     public static int MessagesReceived = 0;
+    public static int VCsProcessed = 0;
 
     static void Main(string[] args)
     {
@@ -65,13 +74,18 @@ public class Program
         WalletHelpers.InitializeItems();
         WalletHelpers.InitializeParties();
 
+        // Charlie creates a VCA offering specific capabilities for a specific VC to Delta
+        string vckid = DIDKey.Generate(new GenerateKeyRequest { KeyType = KeyType.X25519 }).Key[0].Kid;
         string grantedkey = KeyVault.FindKey("Delta");
-        string vcakid = DIDKey.Generate(new GenerateKeyRequest { KeyType = KeyType.X25519 }).Key[0].Kid;
         List<string> rights = new List<string>() { "read" };
         List<string> restrictions = new List<string>() { "forward" };
         List<string> processing = new List<string>() { "approve", "reject" };
-        VCTPS_VCA_SealedEnvelope vca = VCTPSCredentialFactory.NewVCACredential(grantedkey, vcakid,
-            rights, restrictions, processing, KeyVault.Find("Charlie").ProofKey.Sk, Helpers.ToBase64String("1234"));
+        VCTPS_VCA_SealedEnvelope vca = VCTPSCredentialFactory.NewVCACredential(
+            grantedkey, vckid,
+            rights, restrictions, processing, 
+            KeyVault.Find("Charlie").ProofKey.Sk, 
+            Helpers.ToBase64String("1234")
+        );
         string sealedEnvelopeJson = vca.ToString();
         Console.WriteLine("sealedEnvelopeJson:\r\n" + sealedEnvelopeJson);
 
@@ -80,13 +94,13 @@ public class Program
         didAgent.Start();
         Console.WriteLine("DIDCOMM Agent started...");
 
-        var notify = VCTPSMessageFactory.NewNotifyMsg(KeyVault.FindKey("Charlie"), new string[] { KeyVault.FindKey("Delta"), KeyVault.FindKey("Echo") }, sealedEnvelopeJson);
-        foreach (var to in notify.To.ToList())
-        {
-            DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, notify.From, to, notify );
-        }
+        var notify = VCTPSMessageFactory.NewNotifyMsg(
+            KeyVault.FindKey("Charlie"), 
+            new string[] { KeyVault.FindKey("Delta"), KeyVault.FindKey("Echo") }, 
+            sealedEnvelopeJson);
+        DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, notify);
 
-        while(Processing)
+        while (Processing)
         {
             foreach(var queue in Queues)
             {
@@ -100,7 +114,11 @@ public class Program
                 }
             }
 
-            Console.WriteLine("Processing: " + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. " + Program.MessagesReceived.ToString() + " HTTP rcvd.");
+            Console.WriteLine("Processing: "
+                + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. "
+                + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. "
+                + Program.MessagesReceived.ToString() + " HTTP rcvd. "
+                + Program.VCsProcessed.ToString() + " VCs proc.");
             Thread.Sleep(100);
         }
 
@@ -135,26 +153,21 @@ public class Program
         {
             case VCTPSMessageFactory.NOTIFY: // On receipt, Bob replies with a PULL and VCAACK
                 {
-                    var pull = VCTPSMessageFactory.NewPullMsg(skid, new string[] { kid }, vcaackJson);
-                    foreach (var to in pull.To.ToList())
-                    {
-                        DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull.From, to, pull);
-                    }
+                    var pull = VCTPSMessageFactory.NewPullMsg(kid, new string[] { skid }, vcaackJson);
+                    DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull);
                     break;
                 }
             case VCTPSMessageFactory.PULL: // On receipt, Alice replies with a PUSH, VC and VCAACK
                 {
-                    var pull = VCTPSMessageFactory.NewPushMsg(skid, new string[] { kid }, vcaackJson, vcJson);
-                    foreach (var to in pull.To.ToList())
-                    {
-                        DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull.From, to, pull);
-                    }
+                    var push = VCTPSMessageFactory.NewPushMsg(kid, new string[] { skid }, vcaackJson, vcJson);
+                    DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, push);
                     break;
                 }
             case VCTPSMessageFactory.PUSH: // On receipt, Bob has received the VC and VCAACK
                 {
                     // New credential received, process it according to processing rights in VCAACK
                     WorkflowEngine.ProcessCredential(); // TODO
+                    VCsProcessed++;
                     break;
                 }
             case VCTPSMessageFactory.POLL: // On receipt, Alice (and co.) replies with a NOTIFY and VCA
