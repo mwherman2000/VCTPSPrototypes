@@ -118,7 +118,7 @@ public class Program
                 + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " 
                 + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. " 
                 + Program.MessagesReceived.ToString() + " HTTP rcvd. "
-                + Program.VCsProcessed.ToString() + " VCs proc.");
+                + Program.VCsProcessed.ToString() + " VCs proc. (will be < total # messages sent/rcvd)");
             Thread.Sleep(100);
         }
 

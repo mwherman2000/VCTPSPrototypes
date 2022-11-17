@@ -53,7 +53,7 @@ namespace VCTPSPrototype4
                 Console.WriteLine(">>>Request:" + jsonRequest);
                 requestMessage.Content = new StringContent(jsonRequest);
                 var task = httpClient.SendAsync(requestMessage);
-                task.Wait();
+                task.Wait();  // if an exception is thrown here, you likely forgot to run Visual Studio in "Run as Administrator" mode
                 //var result = task.Result;
                 //jsonResponse = result.Content.ReadAsStringAsync().Result;
                 //Console.WriteLine(">>>Response:" + url);
