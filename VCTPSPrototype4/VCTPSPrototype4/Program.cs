@@ -13,36 +13,36 @@ using Subjects;
 
 namespace VCTPSPrototype4;
 
-class DIDCOMMAgentImplementation : DIDCOMMAgentBase
+class DIDCommAgentImplementation : DIDCommAgentBase
 {
-    public override void DIDCOMMEndpointHandler(DIDCOMMMessage request, out DIDCOMMResponse response)
+    public override void DIDCommEndpointHandler(DIDCommMessageRequest request, out DIDCommResponse response)
     {
-        DIDCOMMEncryptedMessage encryptedMessage = request.encryptedMessage;
+        DIDCommEncryptedMessage64 didcommEncryptedMessage64 = request.encryptedMessage64;
 
-        EncryptedMessage emessage = new EncryptedMessage();
-        emessage.Iv = ByteString.FromBase64(encryptedMessage.lv64);
-        emessage.Ciphertext = ByteString.FromBase64(encryptedMessage.ciphertext64);
-        emessage.Tag = ByteString.FromBase64(encryptedMessage.tag64);
+        EncryptedMessage encryptedMessage = new EncryptedMessage();
+        encryptedMessage.Iv = ByteString.FromBase64(didcommEncryptedMessage64.lv64);
+        encryptedMessage.Ciphertext = ByteString.FromBase64(didcommEncryptedMessage64.ciphertext64);
+        encryptedMessage.Tag = ByteString.FromBase64(didcommEncryptedMessage64.tag64);
         EncryptionRecipient r = new EncryptionRecipient();
-        r.MergeFrom(ByteString.FromBase64(encryptedMessage.recipients64[0]));
-        emessage.Recipients.Add(r);
+        r.MergeFrom(ByteString.FromBase64(didcommEncryptedMessage64.recipients64[0]));
+        encryptedMessage.Recipients.Add(r);
 
         string kid = r.Header.KeyId;
         string skid = r.Header.SenderKeyId;
-        Console.WriteLine("DIDCOMMEndpointHandler: " + skid + " to\r\n" + kid);
+        Console.WriteLine("DIDCommEndpointHandler: " + skid + " to\r\n" + kid);
 
         if (!Program.Queues.ContainsKey(kid))
         {
             Program.Queues.TryAdd(kid, new ConcurrentQueue<EncryptedMessage>());
         }
-        Program.Queues[kid].Enqueue(emessage);
+        Program.Queues[kid].Enqueue(encryptedMessage);
 
         response.rc = (int)Trinity.TrinityErrorCode.E_SUCCESS;
 
         Program.MessagesReceived++;
-        Console.WriteLine("DIDCOMMEndpointHandler: " 
-            + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " 
-            + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. "
+        Console.WriteLine("DIDCommEndpointHandler: " 
+            + DIDCommHelpers.DIDCommMessageRequestsSent.ToString() + " DIDComm sent. " 
+            + DIDCommHelpers.HttpMessagesSent.ToString() + " HTTP sent. "
             + Program.MessagesReceived.ToString() + " HTTP rcvd. "
             + Program.VCsProcessed.ToString() + " VCs proc.");
     }
@@ -65,7 +65,7 @@ public class Program
         new ConcurrentDictionary<string, ConcurrentQueue<EncryptedMessage>>();
     public static bool Processing = true;
     public static Dictionary<string, ActorInfo> KeyVault = new Dictionary<string, ActorInfo>();
-    public const string DIDCOMMEndpointUrl = "http://localhost:8081/DIDCOMMEndpoint/";
+    public const string DIDCommEndpointUrl = "http://localhost:8081/DIDCommEndpoint/";
     public static string vcJson;
     public static string vcaJson;
     public static string vcaackJson;
@@ -93,12 +93,12 @@ public class Program
         vcaackJson = Helpers.GetTemplate("VCTPSPrototype4.vcaack2.json");
 
         Trinity.TrinityConfig.HttpPort = 8081;
-        DIDCOMMAgentImplementation didAgent = new DIDCOMMAgentImplementation();
+        DIDCommAgentImplementation didAgent = new DIDCommAgentImplementation();
         didAgent.Start();
-        Console.WriteLine("DIDCOMM Agent started...");
+        Console.WriteLine("DIDComm Agent started...");
 
         var notify = VCTPSMessageFactory.NewNotifyMsg(Charlie.KeyId, new string[] { Delta.KeyId, Echo.KeyId }, vcaJson);
-        DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, notify);
+        DIDCommHelpers.SendDIDCommMessageRequest(DIDCommEndpointUrl, notify);
 
         while(Processing)
         {
@@ -115,29 +115,29 @@ public class Program
             }
 
             Console.WriteLine("Processing: " 
-                + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " 
-                + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. " 
+                + DIDCommHelpers.DIDCommMessageRequestsSent.ToString() + " DIDComm sent. " 
+                + DIDCommHelpers.HttpMessagesSent.ToString() + " HTTP sent. " 
                 + Program.MessagesReceived.ToString() + " HTTP rcvd. "
                 + Program.VCsProcessed.ToString() + " VCs proc. (will be < total # messages sent/rcvd)");
             Thread.Sleep(100);
         }
 
-        Console.WriteLine("Press Enter to stop DIDCOMM Agent...");
+        Console.WriteLine("Press Enter to stop DIDComm Agent...");
         Console.ReadLine();
 
         didAgent.Stop();
     }
 
-    private static void ProcessEncryptedMessage(EncryptedMessage? emessage)
+    private static void ProcessEncryptedMessage(EncryptedMessage? encryptedMessage)
     {
         EncryptionRecipient r = new EncryptionRecipient();
-        r = emessage.Recipients.First<EncryptionRecipient>();   
+        r = encryptedMessage.Recipients.First<EncryptionRecipient>();   
         string kid = r.Header.KeyId;
         string skid = r.Header.SenderKeyId;
         Console.WriteLine("ProcessMessage:" + skid + " to\r\n" + kid);
 
-        var decryptedMessage = DIDComm.Unpack(new UnpackRequest { Message = emessage, SenderKey = KeyVault[skid].MsgPk, ReceiverKey = KeyVault[kid].MsgSk });
-        var plaintext = decryptedMessage.Plaintext;
+        var unpackResponse = DIDComm.Unpack(new UnpackRequest { Message = encryptedMessage, SenderKey = KeyVault[skid].MsgPk, ReceiverKey = KeyVault[kid].MsgSk });
+        var plaintext = unpackResponse.Plaintext;
         CoreMessage core = new CoreMessage();
         core.MergeFrom(plaintext);
         BasicMessage basic = new BasicMessage();
@@ -154,13 +154,13 @@ public class Program
             case VCTPSMessageFactory.NOTIFY: // On receipt, Bob replies with a PULL and VCAACK
                 {
                     var pull = VCTPSMessageFactory.NewPullMsg(kid, new string[] { skid }, vcaackJson);
-                    DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, pull);
+                    DIDCommHelpers.SendDIDCommMessageRequest(DIDCommEndpointUrl, pull);
                     break;
                 }
             case VCTPSMessageFactory.PULL: // On receipt, Alice replies with a PUSH, VC and VCAACK
                 {
                     var push = VCTPSMessageFactory.NewPushMsg(kid, new string[] { skid }, vcaackJson, vcJson);
-                    DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, push);
+                    DIDCommHelpers.SendDIDCommMessageRequest(DIDCommEndpointUrl, push);
                     break;
                 }
             case VCTPSMessageFactory.PUSH: // On receipt, Bob has received the VC and VCAACK

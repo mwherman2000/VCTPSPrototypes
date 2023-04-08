@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="DIDCOMMAgent.tsl" />
+    <None Remove="DIDCommAgent.tsl" />
     <None Remove="vc2.json" />
     <None Remove="vca2.json" />
     <None Remove="vcaack2.json" />
@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TslCodegen Include="DIDCOMMAgent.tsl" />
+    <TslCodegen Include="DIDCommAgent.tsl" />
   </ItemGroup>
 
 </Project>

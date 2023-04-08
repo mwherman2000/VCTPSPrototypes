@@ -34,7 +34,7 @@ protocol DIDCOMMEndpoint
 {
 	Type: HTTP;
 	Request:  DIDCOMMMessage;
-	Response: DIDCOMMResponse;
+	Response: DIDCOMMResponse; // void;
 }
 
 server DIDCOMMAgent

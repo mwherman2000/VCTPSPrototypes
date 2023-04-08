@@ -18,7 +18,7 @@ namespace VCTPSPrototype1
         public override void DIDCOMMEndpointHandler(DIDCOMMMessage request, out DIDCOMMResponse response)
         {
             // TODO
-            response.rc = (int)Trinity.TrinityErrorCode.E_SUCCESS;
+            response.rc = (int)200; // Trinity.TrinityErrorCode.E_SUCCESS;
         }
     }
 
@@ -31,6 +31,8 @@ namespace VCTPSPrototype1
             DIDCOMMAgentImplementation didAgent = new DIDCOMMAgentImplementation();
             didAgent.Start();
             Console.WriteLine("DIDCOMM Agent started...");
+
+
 
             string emJson = "{}"; // dummy message
 

@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="DIDCommAgent.tsl" />
+    <None Remove="vc2.json" />
+    <None Remove="vca2.json" />
+    <None Remove="vcaack2.json" />
+    <None Remove="VCTPS.tsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="vc2.json" />
+    <EmbeddedResource Include="vca2.json" />
+    <EmbeddedResource Include="vcaack2.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.20.0" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.11318" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Okapi.Net">
+      <HintPath>..\..\..\okapi\dotnet\Library\Okapi\bin\Debug\net6.0\Okapi.Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <TslCodegen Include="DIDCommAgent.tsl" />
+  </ItemGroup>
+
+</Project>

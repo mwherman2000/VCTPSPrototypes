@@ -29,29 +29,29 @@ namespace VCTPSPrototype4
         }
     }
 
-    public static class DIDCOMMHelpers
+    public static class DIDCommHelpers
     { 
         public static int HttpMessagesSent = 0;
-        public static int DIDCOMMMessagesSent = 0;
+        public static int DIDCommMessageRequestsSent = 0;
         static readonly HttpClient httpClient = new HttpClient(); 
         // https://www.thecodebuzz.com/using-httpclient-best-practices-and-anti-patterns/
 
-        private static string SendHttpMessage(string url, string jsonRequest)
+        private static string SendHttpMessage(string url, string jsonMessageRequest)
         {
             string jsonResponse = "{ }";
 
             HttpMessagesSent++;
             Console.WriteLine("SendHTTPCOMMMessage: " 
-                + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " 
-                + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. " 
+                + DIDCommHelpers.DIDCommMessageRequestsSent.ToString() + " DIDComm sent. " 
+                + DIDCommHelpers.HttpMessagesSent.ToString() + " HTTP sent. " 
                 + Program.MessagesReceived.ToString() + " HTTP rcvd.");
 
             Console.WriteLine(">>>Agent Url:" + url);
             using (var requestMessage = new HttpRequestMessage(new HttpMethod("POST"), url))
             {
                 requestMessage.Headers.TryAddWithoutValidation("Accept", "application/json");
-                Console.WriteLine(">>>Request:" + jsonRequest);
-                requestMessage.Content = new StringContent(jsonRequest);
+                Console.WriteLine(">>>Request:" + jsonMessageRequest);
+                requestMessage.Content = new StringContent(jsonMessageRequest);
                 var task = httpClient.SendAsync(requestMessage);
                 task.Wait();  // if an exception is thrown here, you likely forgot to run Visual Studio in "Run as Administrator" mode
                 //var result = task.Result;
@@ -62,36 +62,42 @@ namespace VCTPSPrototype4
             return jsonResponse;
         }
 
-        public static void SendDIDCOMMMessage(string DIDCOMMEndpointUrl, CoreMessage core)
+        public static void SendDIDCommMessageRequest(string DIDCommEndpointUrl, CoreMessage core)
         {
             foreach (var to in core.To.ToList())
             {
-                DIDCOMMHelpers.SendDIDCOMMMessage(DIDCOMMEndpointUrl, core.From, to, core);
+                DIDCommHelpers.SendDIDCommMessageRequest(DIDCommEndpointUrl, core.From, to, core);
             }
         }
 
-        public static string SendDIDCOMMMessage(string DIDCOMMEndpointUrl, string from, string to, CoreMessage core)
+        public static string SendDIDCommMessageRequest(string DIDCommEndpointUrl, string from, string to, CoreMessage core)
         {
             string jsonResponse = "{ }";
 
-            Console.WriteLine("SendDIDCOMMMessage: " 
-                + DIDCOMMHelpers.DIDCOMMMessagesSent.ToString() + " DIDCOMM sent. " 
-                + DIDCOMMHelpers.HttpMessagesSent.ToString() + " HTTP sent. " 
+            Console.WriteLine("SendDIDCommMessageRequest: " 
+                + DIDCommHelpers.DIDCommMessageRequestsSent.ToString() + " DIDComm sent. " 
+                + DIDCommHelpers.HttpMessagesSent.ToString() + " HTTP sent. " 
                 + Program.MessagesReceived.ToString() + " HTTP rcvd.");
 
             Console.WriteLine(">>Sending to: " + Program.KeyVault[to].Name + "\t" + to); ;
-            var encryptedPackage = DIDComm.Pack(new PackRequest { Plaintext = core.ToByteString(), 
+            var packResponse = DIDComm.Pack(new PackRequest { Plaintext = core.ToByteString(), 
                                                                     SenderKey = Program.KeyVault[from].MsgSk, 
                                                                     ReceiverKey = Program.KeyVault[to].MsgPk, 
                                                                     Mode = EncryptionMode.Direct });
-            var emessage = encryptedPackage.Message;
-            DIDCOMMEncryptedMessage em = new DIDCOMMEncryptedMessage(emessage.Iv.ToBase64(), emessage.Ciphertext.ToBase64(), emessage.Tag.ToBase64(),
-                recipients64: new List<string>() { emessage.Recipients[0].ToByteString().ToBase64() });
-            DIDCOMMMessage msg = new DIDCOMMMessage(em);
-            var emJson = msg.ToString();
+            var encryptedMessage = packResponse.Message;
+            DIDCommEncryptedMessage64 encryptedMessage64 = new DIDCommEncryptedMessage64(
+                encryptedMessage.Iv.ToBase64(),
+                encryptedMessage.Ciphertext.ToBase64(),
+                encryptedMessage.Tag.ToBase64(),
+                recipients64: new List<string>() { encryptedMessage.Recipients[0].ToByteString().ToBase64() }
+            );
+
+            DIDCommMessageRequest messageRequest = new DIDCommMessageRequest(encryptedMessage64);
+            var jsonMessageRequest = messageRequest.ToString();
+
             // Perform async HTTP POST
-            var task = Task.Run(() => DIDCOMMHelpers.SendHttpMessage(DIDCOMMEndpointUrl, emJson));
-            DIDCOMMMessagesSent++;
+            var task = Task.Run(() => DIDCommHelpers.SendHttpMessage(DIDCommEndpointUrl, jsonMessageRequest));
+            DIDCommMessageRequestsSent++;
 
             return jsonResponse;
         }

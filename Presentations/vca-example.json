@@ -1,0 +1,50 @@
+{
+    "envelope": {
+        "udid": "did:key:z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG#z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG",
+        "label": {
+            "types": [
+                "Verifiable Credential",
+                "Structured Credential",
+                "Verifiable Capability Authorization"
+            ],
+            "credtype": "VerifiableCapabilityAuthorization",
+            "version": 0,
+            "trustLevel": "OberonProof",
+            "encryptionFlag": "NotEncrypted",
+            "name": "VCA did:key:z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG#z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG",
+            "comments": [
+                "VCA did:key:z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG#z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG"
+            ],
+            "vca64": ""
+        },
+        "content": {
+            "udid": "did:key:z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG#z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG",
+            "context": [
+                "https://www.sovrona.com/ns/svrn/v1"
+            ],
+            "credentialsubjectudid": "did:key:z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG#z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG",
+            "claims": {
+                "vcatype": "Proclamation",
+                "subject": "did:key:z6LSiXG9a1gSsDcMF4BkocShayfew86sy6FR6dtcV1zWgovQ#z6LSiXG9a1gSsDcMF4BkocShayfew86sy6FR6dtcV1zWgovQ",
+                "grantedkey": "did:key:z6LSjNJkeDgNYHzdwWhJrq8yMUswoGYRbwt9vZFiV9xh6kb1#z6LSjNJkeDgNYHzdwWhJrq8yMUswoGYRbwt9vZFiV9xh6kb1",
+                "caveat": {
+                    "id": "did:key:z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG#z6LSknZiCYXbR78HZhVe3F3CGHh6giefvejDKxYzfjib4RhG",
+                    "rights": [
+                        "read"
+                    ],
+                    "restrictions": [
+                        "forward"
+                    ],
+                    "processing": [
+                        "approve",
+                        "reject"
+                    ]
+                }
+            }
+        }
+    },
+    "proof": {
+        "hashedThumbprint64": "CpO0CRXfQoRULkVowtg1yKpU1ZCnLKetLL0QSrpFEeo=",
+        "proof64": "piX5fWWb0/2GUsCxxYx0u0FwGOqBjAtZ+kbamLxX9UXC2WCw8MCvIiL95oD70TPpqv8CtaTb6J2kSabKNoAB43WSvLy7ZCPGH7qH2YTfj+hzHqCW9UbcyWtOsatHWpTomNaBLRIb8FCK1BDC3KXtZDGF3UqaQ1gWVfVPitfjGRc3Ec/sN/vhDL+iHq0OHaOKB2EDo9YAf94ujbXivBU5FBwLSoHwqhIwa2AFnbyKaxRMXYLVVeNnlw35o111VPE8tze3i065107j27c1ppGpPCp7lVdCFyj8eHm10xd2UllS9M5fQwHQYeDvxu4YAnbYmUXk3fTfJWMHWEyck1T6bg=="
+    }
+}
