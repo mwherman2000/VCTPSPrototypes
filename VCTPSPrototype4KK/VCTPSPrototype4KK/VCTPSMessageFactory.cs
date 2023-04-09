@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace VCTPSPrototype4KK
 {
-    public static class VCTPSMessageFactory
+    public static class MessageFactory
     {
         public const string ITSME = "https://example.org/knockknock/1.0/itsme";
         public const string INITIALIZE = "https://example.org/knockknock/1.0/initialize";

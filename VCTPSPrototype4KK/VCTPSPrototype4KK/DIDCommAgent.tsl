@@ -7,7 +7,7 @@
 // http://hyperonomy.com
 // (c) Copyright 2022. Parallelspace Corporation, Bindloss, Alberta, Canada
 
-cell struct DIDCommEncryptedMessage_Cell
+cell struct DIDCommEncryptedMessage64_Cell
 {
 	DIDCommEncryptedMessage64 em;
 }

@@ -20,32 +20,25 @@ namespace VCTPSPrototype4KK
         {
             DIDCommEncryptedMessage64 didcommEncryptedMessage64 = request.encryptedMessage64;
 
-            EncryptedMessage encryptedMessage = new EncryptedMessage();
-            encryptedMessage.Iv = ByteString.FromBase64(didcommEncryptedMessage64.lv64);
-            encryptedMessage.Ciphertext = ByteString.FromBase64(didcommEncryptedMessage64.ciphertext64);
-            encryptedMessage.Tag = ByteString.FromBase64(didcommEncryptedMessage64.tag64);
             EncryptionRecipient r = new EncryptionRecipient();
             r.MergeFrom(ByteString.FromBase64(didcommEncryptedMessage64.recipients64[0]));
-            encryptedMessage.Recipients.Add(r);
-
-            string kid = r.Header.KeyId;
+            string rkid = r.Header.KeyId;
             string skid = r.Header.SenderKeyId;
-            Console.WriteLine("DIDCommEndpointHandler: " + skid + " to\r\n" + kid);
+            Console.WriteLine("DIDCommEndpointHandler: " + skid + " to\r\n" + rkid);
 
             // Persist encryptedMessage
-            DIDCommEncryptedMessage_Cell encryptedMessageCell = new DIDCommEncryptedMessage_Cell(didcommEncryptedMessage64);
-            // encryptedMessageCell.em = didcommEncryptedMessage64;
-            Global.LocalStorage.SaveDIDCommEncryptedMessage_Cell(encryptedMessageCell);
+            DIDCommEncryptedMessage64_Cell encryptedMessage64Cell = new DIDCommEncryptedMessage64_Cell(didcommEncryptedMessage64);
+            Global.LocalStorage.SaveDIDCommEncryptedMessage64_Cell(encryptedMessage64Cell);
             Global.LocalStorage.SaveStorage();
-            var celltype = Global.LocalStorage.GetCellType(encryptedMessageCell.CellId);
+            var celltype = Global.LocalStorage.GetCellType(encryptedMessage64Cell.CellId);
             ulong cellcount = Global.LocalStorage.CellCount;
-            Console.WriteLine("cellid: " + encryptedMessageCell.CellId.ToString() + " celltype: " + celltype.ToString() + " cellcount: " + cellcount);
+            Console.WriteLine("cellid: " + encryptedMessage64Cell.CellId.ToString() + " celltype: " + celltype.ToString() + " cellcount: " + cellcount);
 
-            if (!Program.Queues.ContainsKey(kid))
+            if (!Program.Queues.ContainsKey(rkid))
             {
-                Program.Queues.TryAdd(kid, new ConcurrentQueue<EncryptedMessage>());
+                Program.Queues.TryAdd(rkid, new ConcurrentQueue<long>());
             }
-            Program.Queues[kid].Enqueue(encryptedMessage);
+            Program.Queues[rkid].Enqueue(encryptedMessage64Cell.CellId);
 
             response.rc = (int)Trinity.TrinityErrorCode.E_SUCCESS;
 
@@ -71,8 +64,8 @@ namespace VCTPSPrototype4KK
             public long rpcPort;
         }
 
-        public static ConcurrentDictionary<string, ConcurrentQueue<EncryptedMessage>> Queues =
-            new ConcurrentDictionary<string, ConcurrentQueue<EncryptedMessage>>();
+        public static ConcurrentDictionary<string, ConcurrentQueue<long>> Queues =
+            new ConcurrentDictionary<string, ConcurrentQueue<long>>();
         public static bool Processing = true;
         public static Dictionary<string, ActorInfo> KeyVault = new Dictionary<string, ActorInfo>();
         public const string DIDCommEndpointUrl = "http://localhost:8081/DIDCommEndpoint/";
@@ -122,20 +115,39 @@ namespace VCTPSPrototype4KK
             didAgent.Start();
             Console.WriteLine("DIDComm Agent started...");
 
-            var notify = VCTPSMessageFactory.NewINITIALIZEMsg(Charlie.KeyId, new string[] { Delta.KeyId, Echo.KeyId }, vcaJson);
+            var notify = MessageFactory.NewINITIALIZEMsg(Charlie.KeyId, new string[] { Delta.KeyId, Echo.KeyId }, vcaJson);
             DIDCommHelpers.SendDIDCommMessageRequest(DIDCommEndpointUrl, notify);
 
             while (Processing)
             {
                 foreach (var queue in Queues)
                 {
-                    string kid = queue.Key;
-                    ConcurrentQueue<EncryptedMessage> emessages = queue.Value;
-                    while (emessages.Count > 0)
+                    //string rkidkey = queue.Key;
+                    ConcurrentQueue<long> cellids = queue.Value;
+                    while (cellids.Count > 0)
                     {
-                        EncryptedMessage emessage = new EncryptedMessage();
-                        bool dequeued = emessages.TryDequeue(out emessage);
-                        if (dequeued) ProcessEncryptedMessage(emessage);
+                        long cellid;
+                        bool dequeued = cellids.TryDequeue(out cellid);
+                        if (dequeued)
+                        {
+                            DIDCommEncryptedMessage64_Cell encryptedMessage64Cell = Global.LocalStorage.LoadDIDCommEncryptedMessage64_Cell(cellid);
+
+                            DIDCommEncryptedMessage64 didcommEncryptedMessage64 = encryptedMessage64Cell.em;
+
+                            EncryptionRecipient r = new EncryptionRecipient();
+                            r.MergeFrom(ByteString.FromBase64(didcommEncryptedMessage64.recipients64[0]));
+                            string rkid = r.Header.KeyId;
+                            string skid = r.Header.SenderKeyId;
+                            Console.WriteLine("Main:Dequeue: " + skid + " to\r\n" + rkid);
+
+                            EncryptedMessage encryptedMessage = new EncryptedMessage();
+                            encryptedMessage.Iv = ByteString.FromBase64(didcommEncryptedMessage64.lv64);
+                            encryptedMessage.Ciphertext = ByteString.FromBase64(didcommEncryptedMessage64.ciphertext64);
+                            encryptedMessage.Tag = ByteString.FromBase64(didcommEncryptedMessage64.tag64);
+                            encryptedMessage.Recipients.Add(r);
+
+                            ProcessEncryptedMessage(encryptedMessage);
+                        }
                     }
                 }
 
@@ -157,11 +169,11 @@ namespace VCTPSPrototype4KK
         {
             EncryptionRecipient r = new EncryptionRecipient();
             r = encryptedMessage.Recipients.First<EncryptionRecipient>();
-            string kid = r.Header.KeyId;
+            string rkid = r.Header.KeyId;
             string skid = r.Header.SenderKeyId;
-            Console.WriteLine("ProcessMessage:" + skid + " to\r\n" + kid);
+            Console.WriteLine("ProcessEncryptedMessage:" + skid + " to\r\n" + rkid);
 
-            var unpackResponse = DIDComm.Unpack(new UnpackRequest { Message = encryptedMessage, SenderKey = KeyVault[skid].MsgPk, ReceiverKey = KeyVault[kid].MsgSk });
+            var unpackResponse = DIDComm.Unpack(new UnpackRequest { Message = encryptedMessage, SenderKey = KeyVault[skid].MsgPk, ReceiverKey = KeyVault[rkid].MsgSk });
             var plaintext = unpackResponse.Plaintext;
             CoreMessage core = new CoreMessage();
             core.MergeFrom(plaintext);
@@ -169,36 +181,36 @@ namespace VCTPSPrototype4KK
             basic.MergeFrom(core.Body);
             Console.WriteLine("BasicMessage: " + core.Type + " " + basic.Text);
 
-            ProcessVCTPSMessage(skid, kid, core.Type, basic.Text);
+            ProcessBasicMessage(skid, rkid, core.Type, basic.Text);
         }
 
-        private static void ProcessVCTPSMessage(string skid, string kid, string type, string message)
+        private static void ProcessBasicMessage(string skid, string rkid, string type, string message)
         {
             switch (type) // Alice sending a NOTIFY and a VCA
             {
-                case VCTPSMessageFactory.INITIALIZE: // On receipt, Bob replies with a PULL and VCAACK
+                case MessageFactory.INITIALIZE: // On receipt, Bob replies with a PULL and VCAACK
                     {
-                        var knockknock = VCTPSMessageFactory.NewKNOCKKNOCKMsg(kid, new string[] { skid }, vcaackJson);
+                        var knockknock = MessageFactory.NewKNOCKKNOCKMsg(rkid, new string[] { skid }, vcaackJson);
                         DIDCommHelpers.SendDIDCommMessageRequest(DIDCommEndpointUrl, knockknock);
                         break;
                     }
-                case VCTPSMessageFactory.KNOCKKNOCK: // On receipt, Alice replies with a PUSH, VC and VCAACK
+                case MessageFactory.KNOCKKNOCK: // On receipt, Alice replies with a PUSH, VC and VCAACK
                     {
-                        var whoisthere = VCTPSMessageFactory.NewWHOISTHEREMsg(kid, new string[] { skid }, vcaackJson, vcJson);
+                        var whoisthere = MessageFactory.NewWHOISTHEREMsg(rkid, new string[] { skid }, vcaackJson, vcJson);
                         DIDCommHelpers.SendDIDCommMessageRequest(DIDCommEndpointUrl, whoisthere);
                         break;
                     }
-                case VCTPSMessageFactory.WHOISTHERE: // On receipt, Bob has received the VC and VCAACK
+                case MessageFactory.WHOISTHERE: // On receipt, Bob has received the VC and VCAACK
                     {
                         // New credential received, process it according to processing rights in VCAACK
                         // WorkflowEngine.ProcessCredential(); // TODO
                         // VCsProcessed++;
 
-                        var itsme = VCTPSMessageFactory.NewITSMEMsg(kid, new string[] { skid }, -1); // TODO
+                        var itsme = MessageFactory.NewITSMEMsg(rkid, new string[] { skid }, -1); // TODO
                         DIDCommHelpers.SendDIDCommMessageRequest(DIDCommEndpointUrl, itsme);
                         break;
                     }
-                case VCTPSMessageFactory.ITSME: // On receipt, Alice (and co.) replies with a NOTIFY and VCA
+                case MessageFactory.ITSME: // On receipt, Alice (and co.) replies with a NOTIFY and VCA
                     {
                         break;
                     }
