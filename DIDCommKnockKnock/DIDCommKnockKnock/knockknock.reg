@@ -1,0 +1,16 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\knockknock]
+@="URL: Web 7.0 KnockKnock Authentic Communications Initiation URL Protocol"
+"URL Protocol"=""
+
+[HKEY_CLASSES_ROOT\knockknock\DefaultIcon]
+@="\"C:\\Web7\\DIDCommKnockKnock\\DIDCommKnockKnock\\bin\\Debug\\DIDCommKnockKnock.exe\""
+
+[HKEY_CLASSES_ROOT\knockknock\shell]
+
+[HKEY_CLASSES_ROOT\knockknock\shell\open]
+
+[HKEY_CLASSES_ROOT\knockknock\shell\open\command]
+@="\"C:\\Web7\\DIDCommKnockKnock\\DIDCommKnockKnock\\bin\\Debug\\DIDCommKnockKnock.exe\" \"%1\""
+
