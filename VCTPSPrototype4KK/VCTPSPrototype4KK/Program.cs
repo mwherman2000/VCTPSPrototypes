@@ -77,9 +77,9 @@ namespace VCTPSPrototype4KK
 
         static void Main(string[] args)
         {
-            Charlie.Initialize();
-            Delta.Initialize();
-            Echo.Initialize();
+            Charlie.Initialize("localhost", 8080);
+            Delta.Initialize("localhost", 8084);
+            Echo.Initialize("localhost", 8088);
 
             KeyVault.Add(Charlie.KeyId, new ActorInfo
             {
