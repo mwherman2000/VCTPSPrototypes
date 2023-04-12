@@ -1,0 +1,21 @@
+// Trusted Digial Web Project
+// Hyperonomy Digital Identity Lab
+// Parallelspace Corporation
+// (c) Copyright 2023 Parallelspace Corporation. All Rights Reserved
+
+//////////////////////////////////////////////////////////////////////////////
+
+cell struct KnockKnockDoc_Cell
+{
+	KnockKnockDoc doc;
+}
+
+struct KnockKnockDoc
+{
+	string action;
+	string transport;
+	optional string from;
+	optional string to;
+	optional string correlationId;
+	optional DIDDocument senderDIDDoc;
+}

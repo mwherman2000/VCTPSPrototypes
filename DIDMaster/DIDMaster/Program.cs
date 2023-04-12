@@ -11,6 +11,7 @@ using Okapi.Examples.V1;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.ComponentModel.Design;
+using Subjects;
 
 namespace DIDMaster
 {
@@ -47,6 +48,9 @@ namespace DIDMaster
             string personEmail = args[2];
             int agentPort = int.Parse(args[3]);
             int nodePort = int.Parse(args[4]);
+
+            DIDDocument didDocument = Subjects.MyPersonification.Initialize(personName, "localhost", masterPort);
+            Console.WriteLine("KeyId: " + MyPersonification.KeyId);
 
             Trinity.TrinityConfig.HttpPort = masterPort;
             DIDCOMMAgentImplementation didAgent = new DIDCOMMAgentImplementation();

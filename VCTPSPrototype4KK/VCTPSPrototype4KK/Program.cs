@@ -11,6 +11,9 @@ using Okapi.Examples.V1;
 using System.Collections.Concurrent;
 using Subjects;
 using Trinity;
+using System.Collections.Generic;
+using System.Threading;
+using System.Linq;
 
 namespace VCTPSPrototype4KK
 { 
@@ -115,8 +118,8 @@ namespace VCTPSPrototype4KK
             didAgent.Start();
             Console.WriteLine("DIDComm Agent started...");
 
-            var notify = MessageFactory.NewINITIALIZEMsg(Charlie.KeyId, new string[] { Delta.KeyId, Echo.KeyId }, vcaJson);
-            DIDCommHelpers.SendDIDCommMessageRequest(DIDCommEndpointUrl, notify);
+            var msg = MessageFactory.NewINITIALIZEMsg(Charlie.KeyId, new string[] { Delta.KeyId, Echo.KeyId }, vcaJson);
+            DIDCommHelpers.SendDIDCommMessageRequest(DIDCommEndpointUrl, msg);
 
             while (Processing)
             {

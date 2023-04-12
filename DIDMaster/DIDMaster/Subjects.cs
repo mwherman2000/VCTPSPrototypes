@@ -8,7 +8,7 @@ using Okapi.Security.V1;
 using System.Text.Json.Nodes;
 using Google.Protobuf.WellKnownTypes;
 
-using DIDCommNode;
+using DIDMaster;
 using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
 

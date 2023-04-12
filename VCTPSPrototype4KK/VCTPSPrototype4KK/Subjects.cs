@@ -8,6 +8,7 @@ using Okapi.Security.V1;
 using VCTPSPrototype4KK;
 using System.Text.Json.Nodes;
 using Google.Protobuf.WellKnownTypes;
+using System.Collections.Generic;
 
 namespace Subjects
 {
@@ -254,7 +255,6 @@ namespace Subjects
             ProofKey = Oberon.CreateKey(new CreateOberonKeyRequest());
         }
     }
-}
     public static class Echo
     {
         public static bool IsInitialized = false;

@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.ComponentModel.Design;
 using Trinity;
+using Subjects;
 
 namespace DIDCommAgent
 {
@@ -49,6 +50,9 @@ namespace DIDCommAgent
             string personEmail = args[2];
             int agentPort = int.Parse(args[3]);
 
+            DIDDocument didDocument = Subjects.MyPersonification.Initialize(personName, "localhost", agentPort);
+            Console.WriteLine("KeyId: " + MyPersonification.KeyId);
+
             TrinityConfig.HttpPort = agentPort;
 #pragma warning disable CS0612 // Type or member is obsolete
             TrinityConfig.ServerPort = agentPort + 1;
@@ -57,8 +61,13 @@ namespace DIDCommAgent
             didAgent.Start();
             Console.WriteLine("DIDCommAgent.exe started...");
 
-            DIDDocument didDocument = Subjects.SubjectFactory.Initialize(personName, "localhost", agentPort);
-            string emJson = didDocument.ToString(); // TODO HACK
+            KnockKnockDoc doc = new KnockKnockDoc();
+            doc.action = "knockknock.initialize";
+            doc.from = personEmail;
+            doc.correlationId = "DIDCommAgent";
+            doc.senderDIDDoc = didDocument;
+
+            string emJson = doc.ToString();
 
             using (var httpClient = new HttpClient())
             {

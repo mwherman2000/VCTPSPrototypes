@@ -32,7 +32,7 @@ struct DIDCOMMResponse
 
 struct DoorKnockerMessage
 {
-	DIDDocument didDocument;
+	KnockKnockDoc doc;
 }
 
 struct DoorKnockerResponse 

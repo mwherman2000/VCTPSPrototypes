@@ -9,6 +9,7 @@
   <ItemGroup>
     <None Remove="DIDCOMMAgent.tsl" />
     <None Remove="DIDDocument.tsl" />
+    <None Remove="KnockKnockDoc.tsl" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +26,7 @@
 
   <ItemGroup>
     <TslCodegen Include="DIDCOMMAgent.tsl" />
+    <TslCodegen Include="KnockKnockDoc.tsl" />
     <TslCodegen Include="DIDDocument.tsl" />
   </ItemGroup>
 
