@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DIDMaster": {
+      "commandName": "Project",
+      "commandLineArgs": "8080 Alice alicemallison@gmail.com 8081 8083"
+    }
+  }
+}

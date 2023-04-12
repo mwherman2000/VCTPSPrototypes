@@ -56,10 +56,10 @@ namespace VCTPSPrototype4KK
         public class ActorInfo
         {
             public string Name;
-            public JsonWebKey MsgPk;
-            public JsonWebKey MsgSk;
-            public ByteString ProofPk;
-            public ByteString ProofSk;
+            public JsonWebKey PublicKey;
+            public JsonWebKey SecretKey;
+            public ByteString ProofKeyPk;
+            public ByteString ProofKeySk;
             public long httpPort;
             public long rpcPort;
         }
@@ -84,26 +84,26 @@ namespace VCTPSPrototype4KK
             KeyVault.Add(Charlie.KeyId, new ActorInfo
             {
                 Name = Charlie.Name,
-                MsgPk = Charlie.PublicKey,
-                MsgSk = Charlie.SecretKey,
-                ProofPk = Charlie.ProofKey.Pk,
-                ProofSk = Charlie.ProofKey.Sk
+                PublicKey = Charlie.PublicKey,
+                SecretKey = Charlie.SecretKey,
+                ProofKeyPk = Charlie.ProofKey.Pk,
+                ProofKeySk = Charlie.ProofKey.Sk
             });
             KeyVault.Add(Delta.KeyId, new ActorInfo
             {
                 Name = Delta.Name,
-                MsgPk = Delta.PublicKey,
-                MsgSk = Delta.SecretKey,
-                ProofPk = Delta.ProofKey.Pk,
-                ProofSk = Delta.ProofKey.Sk
+                PublicKey = Delta.PublicKey,
+                SecretKey = Delta.SecretKey,
+                ProofKeyPk = Delta.ProofKey.Pk,
+                ProofKeySk = Delta.ProofKey.Sk
             });
             KeyVault.Add(Echo.KeyId, new ActorInfo
             {
                 Name = Echo.Name,
-                MsgPk = Echo.PublicKey,
-                MsgSk = Echo.SecretKey,
-                ProofPk = Echo.ProofKey.Pk,
-                ProofSk = Echo.ProofKey.Sk
+                PublicKey = Echo.PublicKey,
+                SecretKey = Echo.SecretKey,
+                ProofKeyPk = Echo.ProofKey.Pk,
+                ProofKeySk = Echo.ProofKey.Sk
             });
 
             vcJson = Helpers.GetTemplate("VCTPSPrototype4KK.vc2.json");
@@ -173,7 +173,7 @@ namespace VCTPSPrototype4KK
             string skid = r.Header.SenderKeyId;
             Console.WriteLine("ProcessEncryptedMessage:" + skid + " to\r\n" + rkid);
 
-            var unpackResponse = DIDComm.Unpack(new UnpackRequest { Message = encryptedMessage, SenderKey = KeyVault[skid].MsgPk, ReceiverKey = KeyVault[rkid].MsgSk });
+            var unpackResponse = DIDComm.Unpack(new UnpackRequest { Message = encryptedMessage, SenderKey = KeyVault[skid].PublicKey, ReceiverKey = KeyVault[rkid].SecretKey });
             var plaintext = unpackResponse.Plaintext;
             CoreMessage core = new CoreMessage();
             core.MergeFrom(plaintext);

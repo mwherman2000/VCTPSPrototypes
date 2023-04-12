@@ -13,10 +13,10 @@ namespace VCTPSPrototype4KK
 {
     public static class MessageFactory
     {
-        public const string ITSME = "https://example.org/knockknock/1.0/itsme";
         public const string INITIALIZE = "https://example.org/knockknock/1.0/initialize";
         public const string KNOCKKNOCK = "https://example.org/knockknock/1.0/knocknock";
         public const string WHOISTHERE = "https://example.org/knockknock/1.0/whoisthere";
+        public const string ITSME = "https://example.org/knockknock/1.0/itsme";
         public static Dictionary<string, string> MessageTypes = new Dictionary<string, string>() {
             { ITSME, "poll" },
             { INITIALIZE, "notify" },

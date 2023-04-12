@@ -81,8 +81,8 @@ namespace VCTPSPrototype4KK
 
             Console.WriteLine(">>Sending to: " + Program.KeyVault[to].Name + "\t" + to); ;
             var packResponse = DIDComm.Pack(new PackRequest { Plaintext = core.ToByteString(), 
-                                                                    SenderKey = Program.KeyVault[from].MsgSk, 
-                                                                    ReceiverKey = Program.KeyVault[to].MsgPk, 
+                                                                    SenderKey = Program.KeyVault[from].SecretKey, 
+                                                                    ReceiverKey = Program.KeyVault[to].PublicKey, 
                                                                     Mode = EncryptionMode.Direct });
             var encryptedMessage = packResponse.Message;
             DIDCommEncryptedMessage64 encryptedMessage64 = new DIDCommEncryptedMessage64(

@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="DIDCOMMAgent.tsl" />
+    <None Remove="DIDDocument.tsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.20.0" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.11318" />
+    <PackageReference Include="Okapi.Net" Version="1.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Okapi.Net">
+      <HintPath>..\..\..\okapi\dotnet\Library\Okapi\bin\Debug\net6.0\Okapi.Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <TslCodegen Include="DIDCOMMAgent.tsl" />
+    <TslCodegen Include="DIDDocument.tsl" />
+  </ItemGroup>
+
+</Project>
