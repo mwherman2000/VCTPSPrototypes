@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DIDCommAgent": {
+      "commandName": "Project",
+      "commandLineArgs": "8080 \"Alice Agent\" alicemgallison@gmail.com 8182 "
+    }
+  }
+}

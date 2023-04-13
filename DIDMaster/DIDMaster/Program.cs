@@ -16,18 +16,20 @@ using Subjects;
 namespace DIDMaster
 {
 
-    class DIDCOMMAgentImplementation : DIDCOMMAgentBase
+    class DIDCommAgentImplementation : DIDCommAgentBase
     {
-        public override void DIDCOMMEndpointHandler(DIDCOMMMessage request, out DIDCOMMResponse response)
+        public override void DIDCommEndpointHandler(DIDCommMessageRequest request, out DIDCommResponse response)
         {
             // TODO
-            response.rc = (int)200; // Trinity.TrinityErrorCode.E_SUCCESS;
+            Console.WriteLine("DIDMaster.exe: DIDCommEndpointHandler");
+            response.rc = (int)201; // Trinity.TrinityErrorCode.E_SUCCESS;
         }
 
-        public override void DoorKnockerHandler(DoorKnockerMessage request, out DoorKnockerResponse response)
+        public override void DoorKnockerHandler(DoorKnockerMessageRequest request, out DoorKnockerResponse response)
         {
             // TODO
-            response.rc = (int)200; // Trinity.TrinityErrorCode.E_SUCCESS;
+            Console.WriteLine("DIDMaster.exe: DoorKnockerHandler");
+            response.rc = (int)202; // Trinity.TrinityErrorCode.E_SUCCESS;
         }
     }
 
@@ -48,12 +50,17 @@ namespace DIDMaster
             string personEmail = args[2];
             int agentPort = int.Parse(args[3]);
             int nodePort = int.Parse(args[4]);
+            Console.WriteLine("DIDMaster: " + masterPort.ToString() + " " + personName + " " + personEmail + " " + agentPort.ToString() + " " + nodePort.ToString());
+            Console.ReadLine();
 
-            DIDDocument didDocument = Subjects.MyPersonification.Initialize(personName, "localhost", masterPort);
-            Console.WriteLine("KeyId: " + MyPersonification.KeyId);
+            DIDDocument didDocument = Subjects.MyPersonification.GetDIDDocument("", personName, "localhost", masterPort, true);
+            Console.WriteLine("KeyId:\t" + MyPersonification.KeyId);
+            Console.WriteLine("Id:\t" + didDocument.id);
+            string did = DidWeb7Method.NewDid(didDocument);
+            Console.WriteLine("did:\t" + did);
 
             Trinity.TrinityConfig.HttpPort = masterPort;
-            DIDCOMMAgentImplementation didAgent = new DIDCOMMAgentImplementation();
+            DIDCommAgentImplementation didAgent = new DIDCommAgentImplementation();
             didAgent.Start();
             Console.WriteLine("DIDMaster.exe started...");
 
@@ -61,7 +68,24 @@ namespace DIDMaster
 
             using (var httpClient = new HttpClient())
             {
-                string agentUrl = "http://localhost:" + masterPort.ToString() + "/DIDCOMMEndpoint/";
+                string agentUrl = "http://localhost:" + masterPort.ToString() + "/DIDCommEndpoint/";
+                Console.WriteLine("DIDMaster.Agent Url:" + agentUrl);
+                using (var requestMessage = new HttpRequestMessage(new HttpMethod("POST"), agentUrl))
+                {
+                    requestMessage.Headers.TryAddWithoutValidation("Accept", "application/json");
+                    Console.WriteLine("DIDMaster.Payload:" + emJson);
+                    requestMessage.Content = new StringContent(emJson);
+                    var task = httpClient.SendAsync(requestMessage);
+                    task.Wait();
+                    var result = task.Result;
+                    string jsonResponse = result.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine("DIDMaster.Response:" + jsonResponse);
+                }
+            }
+
+            using (var httpClient = new HttpClient())
+            {
+                string agentUrl = "http://localhost:" + masterPort.ToString() + "/DoorKnocker/";
                 Console.WriteLine("DIDMaster.Agent Url:" + agentUrl);
                 using (var requestMessage = new HttpRequestMessage(new HttpMethod("POST"), agentUrl))
                 {
@@ -80,8 +104,8 @@ namespace DIDMaster
             personEmail = "alicemallison@gmail.com";
             agentPort = 8082;
             nodePort = 8084;
-            ExecuteAsAdmin("..\\..\\..\\..\\DIDCommAgent\\bin\\Debug\\net6.0\\DIDCommAgent.exe", masterPort.ToString() + " " + personName + " " + personEmail + " " + agentPort.ToString());
-            ExecuteAsAdmin("..\\..\\..\\..\\DIDCommNode\\bin\\Debug\\net6.0\\DIDCommNode.exe", masterPort.ToString() + " " + personName + " " + personEmail + " " + nodePort.ToString());
+            ExecuteAsAdmin("C:\\TDW\\repos\\VCTPSPrototypes\\DIDMaster\\DIDCommAgent\\bin\\Debug\\net6.0\\DIDCommAgent.exe", masterPort.ToString() + " " + personName + " " + personEmail + " " + agentPort.ToString());
+            ExecuteAsAdmin("C:\\TDW\\repos\\VCTPSPrototypes\\DIDMaster\\DIDCommNode\\bin\\Debug\\net6.0\\DIDCommNode.exe", masterPort.ToString() + " " + personName + " " + personEmail + " " + nodePort.ToString());
 
             personName = "\"Robert (Bob) Roberts\"";
             personEmail = "roberthroberts@gmail.com";
@@ -93,6 +117,8 @@ namespace DIDMaster
             Console.WriteLine("Press Enter to stop DIDMaster.exe and kill child processes...");
             Console.ReadLine();
 
+            EndProcessTree("DIDCommNode.exe");
+            EndProcessTree("DIDCommAgent.exe");
             EndProcessTree("DIDMaster.exe");
 
             Console.WriteLine("Press Enter to stop DIDMaster.exe...");

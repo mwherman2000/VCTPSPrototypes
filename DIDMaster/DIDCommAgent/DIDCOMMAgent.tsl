@@ -1,5 +1,5 @@
 ﻿// Secure Verifiable Credential Transport Protocol (VCTPS)
-// Verifiable Capability Authorization-based Verifiable Credential Exchange Protocol over DIDCOMM
+// Verifiable Capability Authorization-based Verifiable Credential Exchange Protocol over DIDComm
 // - using the .NET version of the https://github.com/trinsic-id/okapi/tree/main/dotnet Okapi DID libraries
 //   and the Microsoft "Trinity" Graph Engine object platform
 //
@@ -7,12 +7,12 @@
 // http://hyperonomy.com
 // (c) Copyright 2022. Parallelspace Corporation, Bindloss, Alberta, Canada
 
-cell struct DIDCOMMEncryptedMessage_Cell
+cell struct DIDCommEncryptedMessage64_Cell
 {
-	DIDCOMMEncryptedMessage em;
+	DIDCommEncryptedMessage64 em;
 }
 
-struct DIDCOMMEncryptedMessage
+struct DIDCommEncryptedMessage64
 {
 	string lv64;
 	string ciphertext64;
@@ -20,17 +20,17 @@ struct DIDCOMMEncryptedMessage
 	List<string> recipients64;
 }
 
-struct DIDCOMMMessage
+struct DIDCommMessageRequest
 {
-	DIDCOMMEncryptedMessage encryptedMessage; 
+	DIDCommEncryptedMessage64 encryptedMessage; 
 }
 
-struct DIDCOMMResponse 
+struct DIDCommResponse 
 {
 	long rc;
 }
 
-struct DoorKnockerMessage
+struct DoorKnockerMessageRequest
 {
 	KnockKnockDoc doc;
 }
@@ -41,22 +41,22 @@ struct DoorKnockerResponse
 }
 
 
-protocol DIDCOMMEndpoint
+protocol DIDCommEndpoint
 {
 	Type: HTTP;
-	Request:  DIDCOMMMessage;
-	Response: DIDCOMMResponse; // void;
+	Request:  DIDCommMessageRequest;
+	Response: DIDCommResponse; // void;
 }
 
 protocol DoorKnocker
 {
 	Type: HTTP;
-	Request:  DoorKnockerMessage;
+	Request:  DoorKnockerMessageRequest;
 	Response: DoorKnockerResponse; // void;
 }
 
-server DIDCOMMAgent
+server DIDCommAgent
 {
-    protocol DIDCOMMEndpoint;
+    protocol DIDCommEndpoint;
 	protocol DoorKnocker;
 }

@@ -22,25 +22,25 @@ namespace Subjects
         public static string KeyId;
         public static CreateOberonKeyResponse ProofKey;
 
-        public static DIDDocument Initialize(string personName, string host, int port)
+        public static DIDDocument GetDIDDocument(string personDid, string personName, string host, int port, bool initialize)
         {
             DIDDocument didDocument = new DIDDocument();
 
-            string keyFilename = "c:\\temp\\" + personName + ".keystore.json";      // new filename
-            string keyFilename2 = "c:\\temp\\" + personName + ".diddocstore.json";  // new filename
-
-            //File.Delete(keyFilename);
-            //File.Delete(keyFilename2);
+            if (String.IsNullOrEmpty(personDid)) personDid = "";
+            string keyFilename = "c:\\temp\\" + personDid.Replace(":", "_") + ".keystore.json";
+            string keyFilename2 = "c:\\temp\\" + personDid.Replace(":", "_") + ".diddocstore.json";
 
             JsonWebKey didWebKey;
             GenerateKeyResponse didKey;
-            if (!File.Exists(keyFilename) || !File.Exists(keyFilename2))
+            if (initialize)
             {
+                File.Delete(keyFilename);
+                File.Delete(keyFilename2);
+
                 didKey = DIDKey.Generate(new GenerateKeyRequest { KeyType = KeyType.X25519 });
 
                 didWebKey = didKey.Key[0];
                 string didWebKeyJson = JsonSerializer.Serialize(didWebKey);
-                File.WriteAllText(keyFilename, didWebKeyJson);
 
                 JsonNode jsonDoc = JsonNode.Parse(didKey.DidDocument.ToString());
                 var options = new JsonSerializerOptions { WriteIndented = true };
@@ -104,6 +104,10 @@ namespace Subjects
 
                 Console.WriteLine(personName + ": " + didDocument.ToString().Replace("\"type_\"", "\"type\""));
 
+                personDid = didDocument.id;
+                keyFilename = "c:\\temp\\" + personDid.Replace(":", "_") + ".keystore.json";
+                keyFilename2 = "c:\\temp\\" + personDid.Replace(":", "_") + ".diddocstore.json";
+                File.WriteAllText(keyFilename, didWebKeyJson);
                 File.WriteAllText(keyFilename2, didDocument.ToString());
             }
             else

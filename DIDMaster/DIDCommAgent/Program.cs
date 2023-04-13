@@ -17,18 +17,18 @@ using Subjects;
 namespace DIDCommAgent
 {
 
-    class DIDCOMMAgentImplementation : DIDCOMMAgentBase
+    class DIDCommAgentImplementation : DIDCommAgentBase
     {
-        public override void DIDCOMMEndpointHandler(DIDCOMMMessage request, out DIDCOMMResponse response)
+        public override void DIDCommEndpointHandler(DIDCommMessageRequest request, out DIDCommResponse response)
         {
             // TODO
-            response.rc = (int)200; // Trinity.TrinityErrorCode.E_SUCCESS;
+            response.rc = (int)301; // Trinity.TrinityErrorCode.E_SUCCESS;
         }
 
-        public override void DoorKnockerHandler(DoorKnockerMessage request, out DoorKnockerResponse response)
+        public override void DoorKnockerHandler(DoorKnockerMessageRequest request, out DoorKnockerResponse response)
         {
             // TODO
-            response.rc = (int)200; // Trinity.TrinityErrorCode.E_SUCCESS;
+            response.rc = (int)302; // Trinity.TrinityErrorCode.E_SUCCESS;
         }
     }
 
@@ -49,15 +49,17 @@ namespace DIDCommAgent
             string personName = args[1];
             string personEmail = args[2];
             int agentPort = int.Parse(args[3]);
+            Console.WriteLine("DIDCommAgent: " + masterPort.ToString() + " " + personName + " " + personEmail + " " + " " + agentPort.ToString());
+            Console.ReadLine();
 
-            DIDDocument didDocument = Subjects.MyPersonification.Initialize(personName, "localhost", agentPort);
+            DIDDocument didDocument = Subjects.MyPersonification.GetKeys("", personName, "localhost", agentPort, true);
             Console.WriteLine("KeyId: " + MyPersonification.KeyId);
 
             TrinityConfig.HttpPort = agentPort;
 #pragma warning disable CS0612 // Type or member is obsolete
             TrinityConfig.ServerPort = agentPort + 1;
 #pragma warning restore CS0612 // Type or member is obsolete
-            DIDCOMMAgentImplementation didAgent = new DIDCOMMAgentImplementation();
+            DIDCommAgentImplementation didAgent = new DIDCommAgentImplementation();
             didAgent.Start();
             Console.WriteLine("DIDCommAgent.exe started...");
 
@@ -69,6 +71,10 @@ namespace DIDCommAgent
 
             string emJson = doc.ToString();
 
+            Console.WriteLine("Press Enter after attaching Debugger to DIDCommNode.exe...");
+            Console.ReadLine();
+
+            //System.Diagnostics.Debugger.Break();
             using (var httpClient = new HttpClient())
             {
                 string agentUrl = "http://localhost:" + masterPort.ToString() + "/DockerKnocker/";
@@ -82,7 +88,10 @@ namespace DIDCommAgent
                     task.Wait();
                     var result = task.Result;
                     string jsonResponse = result.Content.ReadAsStringAsync().Result;
-                    Console.WriteLine("DIDCommAgent.Response:" + jsonResponse);
+                    Console.WriteLine("DIDCommNode.Response:" + jsonResponse);
+                    DoorKnockerResponse response = new DoorKnockerResponse();
+                    DoorKnockerResponse.TryParse(jsonResponse, out response);
+                    Console.WriteLine("DIDCommNode.Response:" + response.ToString());
                 }
             }
 
